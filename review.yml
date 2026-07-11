@@ -1,0 +1,95 @@
+aid: datalastic
+name: Datalastic
+review:
+  question: Does Datalastic expose a documented public WebSocket API?
+  answer: false
+  date: '2026-07-11'
+  reviewer: API Evangelist
+  asyncapiSpecCreated: false
+  asyncapiScopeNote: |
+    No AsyncAPI document was authored. Datalastic's entire public surface is
+    request/response REST over HTTPS at https://api.datalastic.com/api/v0 -
+    live positions are obtained by polling /vessel, /vessel_pro, /vessel_bulk,
+    and /vessel_inradius, and bulk work is handled by asynchronous /report
+    jobs that clients poll for status. No server-push transport (WebSocket,
+    SSE, or streaming feed) is documented on the public API, so there is
+    nothing to model in AsyncAPI. Datalastic markets "AIS streaming" as a
+    description of its continuously updated database, not as a client-facing
+    streaming protocol.
+findings:
+  summary: |
+    Datalastic does not publish a documented public WebSocket API. Datalastic
+    is a maritime AIS data provider whose public API is a set of REST
+    endpoints under https://api.datalastic.com/api/v0, authenticated with an
+    api-key query parameter tied to a paid subscription. Real-time vessel
+    tracking is delivered by polling the /vessel family of endpoints (the
+    basic endpoint averages a 0.005 second response and is designed for
+    frequent polling), zone monitoring by polling /vessel_inradius, and
+    historical data by /vessel_history and /inradius_history. Larger data
+    pulls run as asynchronous /report jobs whose status (PENDING,
+    IN_PROGRESS, DONE) is itself polled over REST until a result_url is
+    returned. No ws:// or wss:// endpoint, socket-based push feed, or
+    webhook/callback mechanism is documented in the API reference as of the
+    review date.
+  accessModel: |
+    There is no free tier. Access requires a paid subscription - 14-day paid
+    trials start at EUR 9 - with monthly plans metered in database credits
+    (Starter 20,000, Experimenter 80,000, Developer Pro+ unlimited), and all
+    plans share a 600 calls/minute rate limit. Credits are deducted per
+    result returned (per vessel, per port, per vessel-day of history), not
+    per request, and failed requests are not charged. The API documentation
+    is public, so endpoints and parameters can be evaluated before
+    subscribing.
+  transports:
+    - protocol: REST
+      scheme: https
+      baseURL: https://api.datalastic.com/api/v0
+      documented: true
+      note: All endpoints - live tracking, zone traffic, history, vessel/port search, reports, and usage stats - are request/response REST authenticated with an api-key query parameter.
+    - protocol: HTTP Polling
+      scheme: https
+      documented: true
+      note: Real-time tracking is achieved by re-querying /vessel (0.005s average response) and /vessel_inradius; asynchronous /report jobs are also polled for status until DONE.
+    - protocol: WebSocket
+      scheme: wss
+      documented: false
+      note: No WebSocket endpoint is documented anywhere in the Datalastic API reference as of the review date.
+  endpointsConfirmedRest:
+    - GET  https://api.datalastic.com/api/v0/vessel
+    - GET  https://api.datalastic.com/api/v0/vessel_pro
+    - GET  https://api.datalastic.com/api/v0/vessel_bulk
+    - GET  https://api.datalastic.com/api/v0/vessel_inradius
+    - GET  https://api.datalastic.com/api/v0/inradius_history
+    - GET  https://api.datalastic.com/api/v0/vessel_history
+    - GET  https://api.datalastic.com/api/v0/vessel_info
+    - GET  https://api.datalastic.com/api/v0/vessel_find
+    - GET  https://api.datalastic.com/api/v0/port_find
+    - POST https://api.datalastic.com/api/v0/report
+    - GET  https://api.datalastic.com/api/v0/report
+    - GET  https://api.datalastic.com/api/v0/stat
+sources:
+  - url: https://datalastic.com/api-reference/
+    type: APIReference
+    note: Canonical endpoint reference - all endpoints REST with api-key query auth; credit costs and 600 calls/minute limit documented. No WebSocket mentioned.
+  - url: https://docs.datalastic.com/
+    type: Documentation
+    note: Dedicated documentation site for vessel tracking, AIS, and maritime data endpoints.
+  - url: https://datalastic.com/pricing/
+    type: Pricing
+    note: Monthly credit plans (Starter/Experimenter/Developer Pro+ with Add-Ons variants), 14-day paid trials, annual 10% discount.
+  - url: https://datalastic.com/ship-tracking-api/
+    type: Documentation
+    note: Live ship tracking product page - /vessel, /vessel_pro, /vessel_bulk polling endpoints.
+  - url: https://datalastic.com/ship-historical-data-api/
+    type: Documentation
+    note: Historical vessel data product page - /vessel_history with days or from/to (max 31 days) parameters.
+  - url: https://datalastic.com/blog/data-endpoints/
+    type: Documentation
+    note: Endpoint walkthrough confirming vessel_info, port_find, vessel, and vessel_inradius request/response shapes.
+actions:
+  asyncapiPath: null
+  apisYmlUpdated: true
+  reason: |
+    No WebSocket or other server-push protocol surface exists on Datalastic's
+    public API. The whole surface is REST polling plus asynchronous report
+    jobs that are themselves polled, so no AsyncAPI document was created.

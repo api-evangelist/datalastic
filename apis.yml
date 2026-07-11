@@ -1,0 +1,164 @@
+aid: datalastic
+url: https://raw.githubusercontent.com/api-evangelist/datalastic/refs/heads/main/apis.yml
+name: Datalastic
+kind: company
+description: Datalastic is a maritime data API providing real-time AIS vessel
+  tracking, historical ship movements, vessel specifications, and global port
+  data over a simple REST interface. A database of 750,000+ ships is queryable
+  by MMSI, IMO, or UUID for live position, speed, course, heading, destination,
+  and ETA, plus zone traffic monitoring around any coordinate or port, up to 31
+  days of historical track per request, vessel and port finder search, and
+  asynchronous bulk reports. Access is subscription-based with a monthly credit
+  model and api-key authentication.
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+tags:
+- Vessel Tracking
+- Maritime
+- AIS
+- Ships
+- Ports
+- Shipping
+created: '2026-07-11'
+modified: '2026-07-11'
+specificationVersion: '0.19'
+apis:
+- aid: datalastic:datalastic-live-vessel-tracking-api
+  name: Datalastic Live Vessel Tracking API
+  tags:
+  - Vessel Tracking
+  - AIS
+  - Live Position
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://datalastic.com/ship-tracking-api/
+  baseURL: https://api.datalastic.com/api/v0
+  properties:
+  - url: https://datalastic.com/ship-tracking-api/
+    type: Documentation
+  - url: https://datalastic.com/api-reference/
+    type: APIReference
+  - url: openapi/datalastic-openapi.yml
+    type: OpenAPI
+  description: Real-time AIS position for any ship by UUID, MMSI, or IMO. The
+    /vessel endpoint returns location, speed, course, heading, navigational
+    status, destination, and timestamp; /vessel_pro adds ETA, actual time of
+    departure, current draft, and UN/LOCODE destination and departure ports;
+    /vessel_bulk tracks up to 100 vessels in a single call.
+- aid: datalastic:datalastic-vessel-traffic-in-radius-api
+  name: Datalastic Vessel Traffic in Radius API
+  tags:
+  - Zone Monitoring
+  - Port Traffic
+  - AIS
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://datalastic.com/api-reference/
+  baseURL: https://api.datalastic.com/api/v0
+  properties:
+  - url: https://datalastic.com/api-reference/
+    type: APIReference
+  - url: openapi/datalastic-openapi.yml
+    type: OpenAPI
+  description: Zone traffic monitoring with /vessel_inradius - all vessels
+    within a radius (max 50 nautical miles) around a static point (lat/lon, port
+    UUID, or port UN/LOCODE) or a moving vessel (UUID, MMSI, or IMO), with
+    filters for vessel type, subtype, exclusions, and navigational status.
+    /inradius_history replays past traffic for the same zones.
+- aid: datalastic:datalastic-historical-vessel-track-api
+  name: Datalastic Historical Vessel Track API
+  tags:
+  - Historical Data
+  - Vessel Tracking
+  - AIS
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://datalastic.com/ship-historical-data-api/
+  baseURL: https://api.datalastic.com/api/v0
+  properties:
+  - url: https://datalastic.com/ship-historical-data-api/
+    type: Documentation
+  - url: https://datalastic.com/api-reference/
+    type: APIReference
+  - url: openapi/datalastic-openapi.yml
+    type: OpenAPI
+  description: Historical AIS track for a vessel via /vessel_history - past
+    positions filtered by uuid, mmsi, or imo plus a days lookback or an explicit
+    from/to date range (YYYY-MM-DD, maximum 31 days from the from date). Each
+    vessel-day of data consumes one credit.
+- aid: datalastic:datalastic-vessel-info-and-finder-api
+  name: Datalastic Vessel Info and Finder API
+  tags:
+  - Ship Specifications
+  - Search
+  - Ships
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://datalastic.com/vessel-finder-api/
+  baseURL: https://api.datalastic.com/api/v0
+  properties:
+  - url: https://datalastic.com/vessel-finder-api/
+    type: Documentation
+  - url: https://datalastic.com/api-reference/
+    type: APIReference
+  - url: openapi/datalastic-openapi.yml
+    type: OpenAPI
+  description: Static ship data and search. /vessel_info returns specifications
+    for a single vessel - MMSI, IMO, country, call sign, type and subtype, gross
+    tonnage, deadweight, TEU, length, breadth, year built, and home port.
+    /vessel_find searches the 750,000+ ship database by name (exact or fuzzy),
+    type, subtype, country, tonnage, deadweight, dimensions, and year built.
+- aid: datalastic:datalastic-port-finder-api
+  name: Datalastic Port Finder API
+  tags:
+  - Ports
+  - Maritime
+  - Search
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://datalastic.com/api-reference/
+  baseURL: https://api.datalastic.com/api/v0
+  properties:
+  - url: https://datalastic.com/api-reference/
+    type: APIReference
+  - url: openapi/datalastic-openapi.yml
+    type: OpenAPI
+  description: Global maritime port data via /port_find - search ports by name
+    and get back port name, country ISO code and name, UN/LOCODE, port type,
+    latitude/longitude, and administrative area levels. Port UUIDs and
+    UN/LOCODEs feed directly into the traffic-in-radius endpoints.
+- aid: datalastic:datalastic-reports-and-usage-api
+  name: Datalastic Reports and Usage API
+  tags:
+  - Reports
+  - Usage
+  - Bulk Data
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://datalastic.com/api-reference/
+  baseURL: https://api.datalastic.com/api/v0
+  properties:
+  - url: https://datalastic.com/api-reference/
+    type: APIReference
+  - url: openapi/datalastic-openapi.yml
+    type: OpenAPI
+  description: Asynchronous bulk report jobs and account metering. POST /report
+    submits a report job and GET /report polls its status (PENDING, IN_PROGRESS,
+    DONE) and returns a result_url when complete; report_id=_all lists all
+    reports. GET /stat returns current monthly credit consumption and request
+    statistics at no credit cost.
+common:
+- type: LinkedIn
+  url: https://www.linkedin.com/company/datalastic/
+- type: Website
+  url: https://datalastic.com
+- type: Documentation
+  url: https://docs.datalastic.com/
+- type: APIReference
+  url: https://datalastic.com/api-reference/
+- type: Pricing
+  url: https://datalastic.com/pricing/
+- type: Plans
+  url: plans/datalastic-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/datalastic-rate-limits.yml
+- type: FinOps
+  url: finops/datalastic-finops.yml
+- type: Blog
+  url: https://datalastic.com/blog/
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

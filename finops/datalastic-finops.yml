@@ -1,0 +1,101 @@
+specification: FinOps Framework
+specificationVersion: '1.0'
+schema: https://www.finops.org/framework/
+provider: Datalastic
+providerId: datalastic
+created: '2026-07-11'
+modified: '2026-07-11'
+reconciled: false
+tags:
+- Vessel Tracking
+- Maritime
+- AIS
+- Ships
+- FinOps
+- Cost Management
+- FOCUS
+description: >-
+  FinOps view of Datalastic spend. Cost is a flat monthly (or annual, 10%
+  discounted) EUR subscription that bundles a database-credit allowance -
+  Starter EUR 199/month for 20,000 credits, Experimenter EUR 569/month for
+  80,000, Developer Pro+ EUR 679/month unlimited, with "+ Add-Ons" tiers at
+  EUR 599/849/949 adding specialty datasets. The variable dimension is credit
+  consumption, deducted per result returned - 1 per vessel or port, 1 per
+  vessel per day of history, up to 500 per radius query - so query design
+  (filters, radius size, history windows) directly drives how far a plan's
+  allowance goes. Failed requests are free, unused credits reset monthly, and
+  the /stat endpoint provides free consumption telemetry.
+notes: >-
+  Prices captured 2026-07-11 in EUR; verify on the pricing page during
+  reconciliation. The main cost decisions are tier selection (credit
+  allowance vs unlimited), whether add-on datasets are needed, and annual vs
+  monthly billing.
+sources:
+- https://datalastic.com/pricing/
+- https://datalastic.com/api-reference/
+- https://focus.finops.org/focus-specification/v1-3/
+alignedWith:
+  framework: FinOps Foundation Framework
+  frameworkUrl: https://www.finops.org/framework/
+  dataSpec: FOCUS
+  dataSpecVersion: '1.3'
+  dataSpecUrl: https://focus.finops.org/focus-specification/v1-3/
+publisherName: Datalastic
+serviceCategory: Maritime Data and Vessel Tracking
+billingModel:
+  pricingCategory: Subscription with Usage Allowance
+  billingFrequency: Monthly or Annual
+  billingCurrency: EUR
+  chargeCategories:
+  - Purchase
+  - Usage
+  - Adjustment
+focusColumns:
+  ServiceName: Datalastic Maritime API
+  ServiceCategory: Maritime Data and Vessel Tracking
+  ProviderName: Datalastic
+  PublisherName: Datalastic
+  InvoiceIssuerName: Datalastic
+  BillingCurrency: EUR
+  ChargeCategory: Purchase
+  PricingCategory: Committed
+meters:
+- name: database_credits
+  description: Monthly database credits consumed - 1 per vessel or port result, 1 per vessel-day of history, capped at 500 per radius query.
+  unit: credits
+  aggregation: sum
+  dimensions:
+  - account
+  - endpoint
+- name: api_calls
+  description: API requests per minute against the shared 600 calls/minute cap; also useful for detecting wasteful polling.
+  unit: requests
+  aggregation: sum
+  dimensions:
+  - account
+  - endpoint
+- name: report_jobs
+  description: Asynchronous report submissions (1 credit each) plus fixed-price datasets like a full vessel list (5,000 credits) or port list (500 credits).
+  unit: jobs
+  aggregation: sum
+  dimensions:
+  - account
+- name: subscription_fee
+  description: Flat monthly or annual subscription fee for the selected tier and add-ons.
+  unit: EUR
+  aggregation: sum
+  dimensions:
+  - account
+  - plan
+principles:
+- name: Visibility
+  description: Poll the free /stat endpoint to track monthly credit consumption against the plan allowance and alert before exhaustion.
+- name: Allocation
+  description: Attribute credit consumption to workloads by endpoint - live polling, radius zones, history pulls, and reports have very different credit profiles.
+- name: Optimization
+  description: Filter radius queries by vessel type and navigational status to cut per-call vessel counts, size history windows precisely (each vessel-day costs a credit), batch live lookups through /vessel_bulk, and move to Developer Pro+ only when credit spend at lower tiers exceeds the flat unlimited price.
+- name: Accountability
+  description: Review tier fit monthly - unused credits reset and do not roll over, and annual billing saves 10% once usage is predictable.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

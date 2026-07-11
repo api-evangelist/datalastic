@@ -1,0 +1,227 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Datalastic Maritime API",
+    "version": "v0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "api-key",
+      "value": "{{apiKey}}",
+      "in": "query"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Live Tracking",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": { "name": "Basic live ship tracking.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datalastic.com/api/v0/vessel",
+            "params": [
+              { "name": "uuid", "value": "", "type": "query", "description": "Datalastic vessel UUID." },
+              { "name": "mmsi", "value": "566093000", "type": "query", "description": "Vessel MMSI (9-digit)." },
+              { "name": "imo", "value": "", "type": "query", "description": "Vessel IMO number (7-digit)." }
+            ]
+          },
+          "docs": "Latest real-time AIS data for one vessel - position, speed, course, heading, navigational status, destination, timestamp. 1 credit per request."
+        },
+        {
+          "info": { "name": "Pro live ship tracking with ETA.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datalastic.com/api/v0/vessel_pro",
+            "params": [
+              { "name": "uuid", "value": "", "type": "query", "description": "Datalastic vessel UUID." },
+              { "name": "mmsi", "value": "", "type": "query", "description": "Vessel MMSI." },
+              { "name": "imo", "value": "9525338", "type": "query", "description": "Vessel IMO number." }
+            ]
+          },
+          "docs": "Everything /vessel returns plus ETA, actual time of departure, current draft, and UN/LOCODE destination/departure ports. 1 credit per request."
+        },
+        {
+          "info": { "name": "Bulk live ship tracking.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datalastic.com/api/v0/vessel_bulk",
+            "params": [
+              { "name": "mmsi", "value": "566093000", "type": "query", "description": "Repeatable vessel MMSI." },
+              { "name": "imo", "value": "9249403", "type": "query", "description": "Repeatable vessel IMO number." }
+            ]
+          },
+          "docs": "Track up to 100 vessels per call by repeating uuid/mmsi/imo parameters. 1 credit per successfully returned vessel."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Zone Traffic",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": { "name": "Vessels within a radius.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datalastic.com/api/v0/vessel_inradius",
+            "params": [
+              { "name": "lat", "value": "29.15915", "type": "query", "description": "Latitude of the center point. Requires lon." },
+              { "name": "lon", "value": "-89.25454", "type": "query", "description": "Longitude of the center point. Requires lat." },
+              { "name": "radius", "value": "3", "type": "query", "description": "Radius in nautical miles (max 50)." },
+              { "name": "port_uuid", "value": "", "type": "query", "description": "Port UUID as center point (alternative to lat/lon)." },
+              { "name": "port_unlocode", "value": "", "type": "query", "description": "Port UN/LOCODE as center point." },
+              { "name": "type", "value": "", "type": "query", "description": "Vessel type filter." },
+              { "name": "type_specific", "value": "", "type": "query", "description": "Vessel subtype filter." },
+              { "name": "exclude", "value": "", "type": "query", "description": "Vessel types to exclude." },
+              { "name": "nav_status", "value": "", "type": "query", "description": "Numeric navigational status filter." }
+            ]
+          },
+          "docs": "All vessels within a radius (max 50 NM) around coordinates, a port, or a moving vessel (uuid/mmsi/imo). 1 credit per vessel found (max 500)."
+        },
+        {
+          "info": { "name": "Historical vessel traffic within a radius.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datalastic.com/api/v0/inradius_history",
+            "params": [
+              { "name": "lat", "value": "29.15915", "type": "query", "description": "Latitude of the zone center point." },
+              { "name": "lon", "value": "-89.25454", "type": "query", "description": "Longitude of the zone center point." },
+              { "name": "radius", "value": "3", "type": "query", "description": "Radius in nautical miles (max 50)." },
+              { "name": "days", "value": "2", "type": "query", "description": "Days back from today. Alternatively from/to dates." }
+            ]
+          },
+          "docs": "Replays past vessel traffic for a zone. Cost is days multiplied by vessels per day (max 500 vessels/day)."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Historical",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": { "name": "Historical vessel track.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datalastic.com/api/v0/vessel_history",
+            "params": [
+              { "name": "mmsi", "value": "566093000", "type": "query", "description": "Vessel MMSI. Alternatively uuid or imo." },
+              { "name": "days", "value": "5", "type": "query", "description": "Days back from today." },
+              { "name": "from", "value": "", "type": "query", "description": "Start date YYYY-MM-DD (max 31 days from this date)." },
+              { "name": "to", "value": "", "type": "query", "description": "End date YYYY-MM-DD." }
+            ]
+          },
+          "docs": "Past AIS positions for a vessel. 1 credit per vessel per day of data; maximum 31 days from the from date."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Vessel Data",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": { "name": "Ship specifications.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datalastic.com/api/v0/vessel_info",
+            "params": [
+              { "name": "imo", "value": "9525338", "type": "query", "description": "Vessel IMO number. Alternatively uuid or mmsi." }
+            ]
+          },
+          "docs": "Static specs - MMSI, IMO, country, call sign, type/subtype, gross tonnage, deadweight, TEU, length, breadth, year built, home port. 1 credit per vessel."
+        },
+        {
+          "info": { "name": "Vessel finder search.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datalastic.com/api/v0/vessel_find",
+            "params": [
+              { "name": "name", "value": "", "type": "query", "description": "Vessel name to search for." },
+              { "name": "fuzzy", "value": "", "type": "query", "description": "1 for similar-name matching, 0 for exact." },
+              { "name": "type", "value": "Cargo", "type": "query", "description": "Vessel type filter." },
+              { "name": "type_specific", "value": "", "type": "query", "description": "Vessel subtype filter." },
+              { "name": "country_iso", "value": "SG", "type": "query", "description": "Flag country, 2-letter ISO code." },
+              { "name": "gross_tonnage_min", "value": "20000", "type": "query", "description": "Minimum gross tonnage." },
+              { "name": "gross_tonnage_max", "value": "", "type": "query", "description": "Maximum gross tonnage." },
+              { "name": "deadweight_min", "value": "", "type": "query", "description": "Minimum deadweight tonnage." },
+              { "name": "deadweight_max", "value": "", "type": "query", "description": "Maximum deadweight tonnage." },
+              { "name": "length_min", "value": "", "type": "query", "description": "Minimum length in meters." },
+              { "name": "length_max", "value": "", "type": "query", "description": "Maximum length in meters." },
+              { "name": "breadth_min", "value": "", "type": "query", "description": "Minimum breadth in meters." },
+              { "name": "breadth_max", "value": "", "type": "query", "description": "Maximum breadth in meters." },
+              { "name": "year_built_min", "value": "", "type": "query", "description": "Earliest year built." },
+              { "name": "year_built_max", "value": "", "type": "query", "description": "Latest year built." },
+              { "name": "next", "value": "", "type": "query", "description": "Pagination cursor." }
+            ]
+          },
+          "docs": "Search the 750,000+ ship database by name (exact or fuzzy), type, subtype, country, tonnage, dimensions, and year built. 1 credit per vessel found."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Ports",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": { "name": "Port finder search.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datalastic.com/api/v0/port_find",
+            "params": [
+              { "name": "name", "value": "rotterdam", "type": "query", "description": "Port name to search for." },
+              { "name": "fuzzy", "value": "", "type": "query", "description": "1 for similar-name matching, 0 for exact." }
+            ]
+          },
+          "docs": "Search global maritime ports by name - returns name, country, UN/LOCODE, port type, coordinates, and area levels. 1 credit per port found."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Reports and Usage",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": { "name": "Submit an asynchronous report job.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.datalastic.com/api/v0/report",
+            "body": { "type": "json", "data": "{}" }
+          },
+          "docs": "Submits a bulk report job as JSON; the response includes a report_id to poll. Submission costs 1 credit."
+        },
+        {
+          "info": { "name": "Check report status.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datalastic.com/api/v0/report",
+            "params": [
+              { "name": "report_id", "value": "", "type": "query", "description": "Report identifier, or _all to list all reports." }
+            ]
+          },
+          "docs": "Polls report status (PENDING, IN_PROGRESS, DONE); returns a result_url download link when DONE. Free."
+        },
+        {
+          "info": { "name": "API usage statistics.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datalastic.com/api/v0/stat"
+          },
+          "docs": "Current monthly credit consumption and request statistics for the api-key. Free - does not deduct credits."
+        }
+      ]
+    }
+  ]
+}

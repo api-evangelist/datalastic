@@ -1,0 +1,291 @@
+{
+  "info": {
+    "name": "Datalastic Maritime API",
+    "description": "Real-time AIS vessel tracking, historical ship movements, vessel specifications, and global port data. Base URL: https://api.datalastic.com/api/v0. Every request authenticates with an api-key query parameter tied to a paid subscription. Usage is metered in monthly database credits (1 per vessel/port result, 1 per vessel-day of history); all plans share a 600 calls/minute rate limit.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      { "key": "key", "value": "api-key", "type": "string" },
+      { "key": "value", "value": "{{apiKey}}", "type": "string" },
+      { "key": "in", "value": "query", "type": "string" }
+    ]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://api.datalastic.com/api/v0", "type": "string" },
+    { "key": "apiKey", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Live Tracking",
+      "item": [
+        {
+          "name": "Basic live ship tracking",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/vessel?mmsi=566093000",
+              "host": ["{{baseUrl}}"],
+              "path": ["vessel"],
+              "query": [
+                { "key": "mmsi", "value": "566093000", "description": "Vessel MMSI (9-digit). Alternatively use uuid or imo." },
+                { "key": "uuid", "value": "", "description": "Datalastic vessel UUID.", "disabled": true },
+                { "key": "imo", "value": "", "description": "Vessel IMO number (7-digit).", "disabled": true }
+              ]
+            },
+            "description": "Latest real-time AIS data for one vessel - position, speed, course, heading, navigational status, destination, timestamp. Average response 0.005s. 1 credit per request."
+          }
+        },
+        {
+          "name": "Pro live ship tracking with ETA",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/vessel_pro?imo=9525338",
+              "host": ["{{baseUrl}}"],
+              "path": ["vessel_pro"],
+              "query": [
+                { "key": "imo", "value": "9525338", "description": "Vessel IMO number. Alternatively use uuid or mmsi." },
+                { "key": "uuid", "value": "", "description": "Datalastic vessel UUID.", "disabled": true },
+                { "key": "mmsi", "value": "", "description": "Vessel MMSI.", "disabled": true }
+              ]
+            },
+            "description": "Everything /vessel returns plus ETA, actual time of departure, current draft, and UN/LOCODE destination/departure ports. Average response 0.9s. 1 credit per request."
+          }
+        },
+        {
+          "name": "Bulk live ship tracking",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/vessel_bulk?mmsi=566093000&imo=9249403",
+              "host": ["{{baseUrl}}"],
+              "path": ["vessel_bulk"],
+              "query": [
+                { "key": "mmsi", "value": "566093000", "description": "Repeatable vessel MMSI." },
+                { "key": "imo", "value": "9249403", "description": "Repeatable vessel IMO number." }
+              ]
+            },
+            "description": "Track up to 100 vessels per call by repeating uuid/mmsi/imo parameters. 1 credit per successfully returned vessel."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Zone Traffic",
+      "item": [
+        {
+          "name": "Vessels within a radius (static point)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/vessel_inradius?lat=29.15915&lon=-89.25454&radius=3",
+              "host": ["{{baseUrl}}"],
+              "path": ["vessel_inradius"],
+              "query": [
+                { "key": "lat", "value": "29.15915", "description": "Latitude of the center point. Requires lon." },
+                { "key": "lon", "value": "-89.25454", "description": "Longitude of the center point. Requires lat." },
+                { "key": "radius", "value": "3", "description": "Radius in nautical miles (max 50)." },
+                { "key": "port_uuid", "value": "", "description": "Port UUID as center point (alternative to lat/lon).", "disabled": true },
+                { "key": "port_unlocode", "value": "", "description": "Port UN/LOCODE as center point.", "disabled": true },
+                { "key": "type", "value": "", "description": "Vessel type filter, e.g. Cargo.", "disabled": true },
+                { "key": "type_specific", "value": "", "description": "Vessel subtype filter.", "disabled": true },
+                { "key": "exclude", "value": "", "description": "Vessel types to exclude.", "disabled": true },
+                { "key": "nav_status", "value": "", "description": "Numeric navigational status filter.", "disabled": true }
+              ]
+            },
+            "description": "All vessels within a radius (max 50 NM) around coordinates or a port. 1 credit per vessel found (max 500)."
+          }
+        },
+        {
+          "name": "Vessels within a radius (moving vessel)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/vessel_inradius?mmsi=566093000&radius=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["vessel_inradius"],
+              "query": [
+                { "key": "mmsi", "value": "566093000", "description": "Vessel MMSI as dynamic center point. Alternatively uuid or imo." },
+                { "key": "radius", "value": "10", "description": "Radius in nautical miles (max 50)." }
+              ]
+            },
+            "description": "All vessels within a radius of a moving vessel identified by uuid, mmsi, or imo. 1 credit per vessel found (max 500)."
+          }
+        },
+        {
+          "name": "Historical vessel traffic within a radius",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/inradius_history?lat=29.15915&lon=-89.25454&radius=3&days=2",
+              "host": ["{{baseUrl}}"],
+              "path": ["inradius_history"],
+              "query": [
+                { "key": "lat", "value": "29.15915", "description": "Latitude of the zone center point." },
+                { "key": "lon", "value": "-89.25454", "description": "Longitude of the zone center point." },
+                { "key": "radius", "value": "3", "description": "Radius in nautical miles (max 50)." },
+                { "key": "days", "value": "2", "description": "Days back from today. Alternatively from/to dates." },
+                { "key": "from", "value": "", "description": "Start date YYYY-MM-DD.", "disabled": true },
+                { "key": "to", "value": "", "description": "End date YYYY-MM-DD.", "disabled": true }
+              ]
+            },
+            "description": "Replays past vessel traffic for a zone. Cost is days multiplied by vessels per day (max 500 vessels/day)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Historical",
+      "item": [
+        {
+          "name": "Historical vessel track",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/vessel_history?mmsi=566093000&days=5",
+              "host": ["{{baseUrl}}"],
+              "path": ["vessel_history"],
+              "query": [
+                { "key": "mmsi", "value": "566093000", "description": "Vessel MMSI. Alternatively uuid or imo." },
+                { "key": "days", "value": "5", "description": "Days back from today. Alternatively from/to dates." },
+                { "key": "from", "value": "", "description": "Start date YYYY-MM-DD (max 31 days from this date).", "disabled": true },
+                { "key": "to", "value": "", "description": "End date YYYY-MM-DD.", "disabled": true }
+              ]
+            },
+            "description": "Past AIS positions for a vessel. 1 credit per vessel per day of data; maximum 31 days from the from date."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Vessel Data",
+      "item": [
+        {
+          "name": "Ship specifications",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/vessel_info?imo=9525338",
+              "host": ["{{baseUrl}}"],
+              "path": ["vessel_info"],
+              "query": [
+                { "key": "imo", "value": "9525338", "description": "Vessel IMO number. Alternatively uuid or mmsi." }
+              ]
+            },
+            "description": "Static specs - MMSI, IMO, country, call sign, type/subtype, gross tonnage, deadweight, TEU, length, breadth, year built, home port. 1 credit per vessel."
+          }
+        },
+        {
+          "name": "Vessel finder search",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/vessel_find?type=Cargo&gross_tonnage_min=20000&country_iso=SG",
+              "host": ["{{baseUrl}}"],
+              "path": ["vessel_find"],
+              "query": [
+                { "key": "type", "value": "Cargo", "description": "Vessel type filter." },
+                { "key": "gross_tonnage_min", "value": "20000", "description": "Minimum gross tonnage." },
+                { "key": "country_iso", "value": "SG", "description": "Flag country, 2-letter ISO code." },
+                { "key": "name", "value": "", "description": "Vessel name to search for.", "disabled": true },
+                { "key": "fuzzy", "value": "", "description": "1 for similar-name matching, 0 for exact.", "disabled": true },
+                { "key": "type_specific", "value": "", "description": "Vessel subtype filter.", "disabled": true },
+                { "key": "deadweight_min", "value": "", "description": "Minimum deadweight tonnage.", "disabled": true },
+                { "key": "deadweight_max", "value": "", "description": "Maximum deadweight tonnage.", "disabled": true },
+                { "key": "length_min", "value": "", "description": "Minimum length in meters.", "disabled": true },
+                { "key": "length_max", "value": "", "description": "Maximum length in meters.", "disabled": true },
+                { "key": "breadth_min", "value": "", "description": "Minimum breadth in meters.", "disabled": true },
+                { "key": "breadth_max", "value": "", "description": "Maximum breadth in meters.", "disabled": true },
+                { "key": "year_built_min", "value": "", "description": "Earliest year built.", "disabled": true },
+                { "key": "year_built_max", "value": "", "description": "Latest year built.", "disabled": true },
+                { "key": "next", "value": "", "description": "Pagination cursor.", "disabled": true }
+              ]
+            },
+            "description": "Search the 750,000+ ship database by name (exact or fuzzy), type, subtype, country, tonnage, dimensions, and year built. 1 credit per vessel found."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ports",
+      "item": [
+        {
+          "name": "Port finder search",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/port_find?name=rotterdam",
+              "host": ["{{baseUrl}}"],
+              "path": ["port_find"],
+              "query": [
+                { "key": "name", "value": "rotterdam", "description": "Port name to search for." },
+                { "key": "fuzzy", "value": "", "description": "1 for similar-name matching, 0 for exact.", "disabled": true }
+              ]
+            },
+            "description": "Search global maritime ports by name - returns name, country, UN/LOCODE, port type, coordinates, and area levels. 1 credit per port found."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reports and Usage",
+      "item": [
+        {
+          "name": "Submit an asynchronous report job",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": {
+              "raw": "{{baseUrl}}/report",
+              "host": ["{{baseUrl}}"],
+              "path": ["report"]
+            },
+            "description": "Submits a bulk report job as JSON; the response includes a report_id to poll. Submission costs 1 credit; large datasets like a full vessel list (5,000 credits) or port list (500 credits) are priced per dataset."
+          }
+        },
+        {
+          "name": "Check report status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/report?report_id={{reportId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["report"],
+              "query": [
+                { "key": "report_id", "value": "{{reportId}}", "description": "Report identifier, or _all to list all reports." }
+              ]
+            },
+            "description": "Polls report status (PENDING, IN_PROGRESS, DONE); returns a result_url download link when DONE. Free."
+          }
+        },
+        {
+          "name": "API usage statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/stat",
+              "host": ["{{baseUrl}}"],
+              "path": ["stat"]
+            },
+            "description": "Current monthly credit consumption and request statistics for the api-key. Free - does not deduct credits."
+          }
+        }
+      ]
+    }
+  ]
+}

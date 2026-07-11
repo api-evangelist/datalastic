@@ -1,0 +1,82 @@
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
+provider: Datalastic
+providerId: datalastic
+created: '2026-07-11'
+modified: '2026-07-11'
+reconciled: false
+tags:
+- Vessel Tracking
+- Maritime
+- AIS
+- Rate Limiting
+- Quotas
+description: >-
+  Datalastic enforces two layers of limits. First, a hard request-rate cap of
+  600 API calls per minute applies uniformly across all subscription plans -
+  exceeding it returns a Too Many Requests error. Second, a monthly
+  database-credit quota meters how much data is returned - Starter includes
+  20,000 credits, Experimenter 80,000, and Developer Pro+ is unlimited.
+  Credits are deducted per result, not per request - 1 per vessel or port
+  returned, 1 per vessel per day of history, with /vessel_inradius capped at
+  500 vessels per call. Failed requests do not deduct credits, unused credits
+  reset monthly, and the /stat endpoint reports current consumption for free.
+notes: >-
+  The 600 calls/minute cap is documented as identical on every plan. Some
+  large report datasets have fixed credit prices - a full vessel list costs
+  5,000 credits and a port list 500 credits. Overuse protection can stop
+  consumption when the monthly quota is reached.
+sources:
+- https://datalastic.com/api-reference/
+- https://datalastic.com/pricing/
+responseCodes:
+  throttled: 429
+limits:
+- name: API Calls Per Minute
+  scope: api-key
+  metric: requests
+  limit: 600 per minute
+  notes: Applies to all plans; exceeding it returns a Too Many Requests error.
+- name: Starter Monthly Credits
+  scope: account
+  metric: credits
+  limit: 20000 per month
+  notes: One credit per vessel/port result or vessel-day of history returned.
+- name: Experimenter Monthly Credits
+  scope: account
+  metric: credits
+  limit: 80000 per month
+  notes: One credit per vessel/port result or vessel-day of history returned.
+- name: Developer Pro+ Monthly Credits
+  scope: account
+  metric: credits
+  limit: unlimited
+  notes: No monthly credit cap; bounded in practice by the 600 calls/minute limit.
+- name: Vessels Per Radius Query
+  scope: request
+  metric: results
+  limit: 500 per call
+  notes: /vessel_inradius returns and charges at most 500 vessels; /inradius_history caps at 500 vessels per day.
+- name: Vessels Per Bulk Call
+  scope: request
+  metric: vessels
+  limit: 100 per call
+  notes: /vessel_bulk tracks up to 100 vessels per request, charging 1 credit per successfully returned vessel.
+- name: History Window
+  scope: request
+  metric: days
+  limit: 31 days from the from date
+  notes: /vessel_history accepts days or from/to (YYYY-MM-DD) with a 31-day maximum range.
+policies:
+- name: Per-Result Metering
+  description: Credits are consumed by results returned, not by requests made; failed requests are not charged and usage checks via /stat are free.
+- name: Overuse Protection
+  description: Plans include overuse protection and credit tracking so consumption stops rather than silently overrunning the monthly quota.
+- name: Monthly Reset
+  description: Unused database credits reset at the end of each monthly billing cycle and do not roll over.
+- name: Backoff Strategy
+  description: Clients should implement exponential backoff with jitter and honor Too Many Requests responses when approaching the 600 calls/minute cap.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

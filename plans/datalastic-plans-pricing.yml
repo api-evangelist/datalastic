@@ -1,0 +1,226 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
+provider: Datalastic
+providerId: datalastic
+created: '2026-07-11'
+modified: '2026-07-11'
+reconciled: false
+tags:
+- Vessel Tracking
+- Maritime
+- AIS
+- Ships
+- Plans
+description: >-
+  Datalastic is subscription-only with no free tier. Plans are metered in
+  monthly database credits - a credit is deducted per result returned (per
+  vessel, per port, per vessel-day of history), not per request, and failed
+  requests are not charged. Three core tiers (Starter, Experimenter, Developer
+  Pro+) cover the standard endpoints (live tracking, zone traffic, history,
+  vessel/port finder, ship specs, port terminals); matching "+ Add-Ons" tiers
+  add specialty datasets (maritime companies, vessel ownership, inspections
+  and detentions, dry dock dates, demolitions, casualties, engine data,
+  classification societies, route tracking, SAT-E tracking). Every tier starts
+  with a 14-day paid trial, annual billing is 10% off, unused credits reset
+  monthly, and all plans share a 600 calls/minute rate limit with a 2-week
+  money-back guarantee.
+notes: >-
+  Prices captured 2026-07-11 from datalastic.com/pricing in EUR. Verify
+  current rates during reconciliation; trial prices (EUR 9/19/45 and
+  10/20/46 for Add-Ons tiers) cover the first 14 days.
+sources:
+- https://datalastic.com/pricing/
+- https://datalastic.com/api-reference/
+plans:
+- id: datalastic-starter
+  name: Starter
+  type: paid
+  description: >-
+    20,000 database credits per month across the core maritime endpoints -
+    ship tracking, port API, historical vessel data, location tracking,
+    vessel/port finder, port terminals, and ship specs - with credit tracking,
+    encryption, and overuse protection. 14-day trial for EUR 9.
+  entries:
+  - label: Monthly Subscription
+    name: starter_monthly
+    type: flat
+    metric: subscription
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: EUR 199/month (EUR 179/month billed annually)
+    userMultiplied: false
+  - label: Included Database Credits
+    name: starter_credits
+    type: usage
+    metric: credits
+    limit: 20000
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: included
+    userMultiplied: false
+  elements:
+  - name: Core Maritime Endpoints
+  - name: Credit Tracking
+  - name: Overuse Protection
+- id: datalastic-experimenter
+  name: Experimenter
+  type: paid
+  description: >-
+    80,000 database credits per month across the same core endpoints and
+    smart controls as Starter. 14-day trial for EUR 19.
+  entries:
+  - label: Monthly Subscription
+    name: experimenter_monthly
+    type: flat
+    metric: subscription
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: EUR 569/month (EUR 512/month billed annually)
+    userMultiplied: false
+  - label: Included Database Credits
+    name: experimenter_credits
+    type: usage
+    metric: credits
+    limit: 80000
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: included
+    userMultiplied: false
+  elements:
+  - name: Core Maritime Endpoints
+  - name: Credit Tracking
+  - name: Overuse Protection
+- id: datalastic-developer-pro
+  name: Developer Pro+
+  type: paid
+  description: >-
+    Unlimited database credits per month across the core endpoints, bounded
+    only by the shared 600 calls/minute rate limit. 14-day trial for EUR 45.
+  entries:
+  - label: Monthly Subscription
+    name: developer_pro_monthly
+    type: flat
+    metric: subscription
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: EUR 679/month (EUR 611/month billed annually)
+    userMultiplied: false
+  - label: Included Database Credits
+    name: developer_pro_credits
+    type: usage
+    metric: credits
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: unlimited (fair-use via 600 calls/minute rate limit)
+    userMultiplied: false
+  elements:
+  - name: Core Maritime Endpoints
+  - name: Unlimited Credits
+  - name: Credit Tracking
+- id: datalastic-starter-addons
+  name: Starter + Add-Ons
+  type: paid
+  description: >-
+    Starter's 20,000 monthly credits plus the specialty add-on datasets -
+    maritime companies, vessel ownership, inspections and detentions, dry
+    dock dates, ship demolitions, casualties, engine data, classification
+    societies, route tracking, and SAT-E tracking. 14-day trial for EUR 10.
+  entries:
+  - label: Monthly Subscription
+    name: starter_addons_monthly
+    type: flat
+    metric: subscription
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: EUR 599/month (EUR 539/month billed annually)
+    userMultiplied: false
+  - label: Included Database Credits
+    name: starter_addons_credits
+    type: usage
+    metric: credits
+    limit: 20000
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: included
+    userMultiplied: false
+  elements:
+  - name: Core Maritime Endpoints
+  - name: All Add-On Datasets
+- id: datalastic-experimenter-addons
+  name: Experimenter + Add-Ons
+  type: paid
+  description: >-
+    Experimenter's 80,000 monthly credits plus all specialty add-on datasets.
+    14-day trial for EUR 20.
+  entries:
+  - label: Monthly Subscription
+    name: experimenter_addons_monthly
+    type: flat
+    metric: subscription
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: EUR 849/month (EUR 764/month billed annually)
+    userMultiplied: false
+  - label: Included Database Credits
+    name: experimenter_addons_credits
+    type: usage
+    metric: credits
+    limit: 80000
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: included
+    userMultiplied: false
+  elements:
+  - name: Core Maritime Endpoints
+  - name: All Add-On Datasets
+- id: datalastic-developer-pro-addons
+  name: Developer Pro+ + Add-Ons
+  type: paid
+  description: >-
+    Unlimited monthly credits plus all specialty add-on datasets. 14-day
+    trial for EUR 46.
+  entries:
+  - label: Monthly Subscription
+    name: developer_pro_addons_monthly
+    type: flat
+    metric: subscription
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: EUR 949/month (EUR 854/month billed annually)
+    userMultiplied: false
+  - label: Included Database Credits
+    name: developer_pro_addons_credits
+    type: usage
+    metric: credits
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: unlimited (fair-use via 600 calls/minute rate limit)
+    userMultiplied: false
+  elements:
+  - name: Core Maritime Endpoints
+  - name: All Add-On Datasets
+  - name: Unlimited Credits
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

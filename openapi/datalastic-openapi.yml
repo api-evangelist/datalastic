@@ -1,0 +1,971 @@
+openapi: 3.0.3
+info:
+  title: Datalastic Maritime API
+  description: >-
+    Datalastic provides real-time AIS vessel tracking, historical ship
+    movements, vessel specifications, and global port data over REST. A
+    database of 750,000+ ships is queryable by MMSI, IMO, or Datalastic UUID.
+    All endpoints are served from https://api.datalastic.com/api/v0 and
+    authenticate with an api-key query parameter tied to a subscription plan.
+    Usage is metered in monthly database credits - most endpoints deduct one
+    credit per vessel or port returned, and historical endpoints deduct one
+    credit per vessel per day of data. All plans share a limit of 600 API
+    calls per minute.
+  version: v0
+  contact:
+    name: Datalastic
+    url: https://datalastic.com
+servers:
+  - url: https://api.datalastic.com/api/v0
+    description: Datalastic production API
+security:
+  - apiKey: []
+tags:
+  - name: Live Tracking
+    description: Real-time AIS vessel position and voyage data.
+  - name: Zone Traffic
+    description: Vessels within a radius of a point, port, or moving vessel.
+  - name: Historical
+    description: Past AIS positions for vessels and zones.
+  - name: Vessel Data
+    description: Static ship specifications and vessel search.
+  - name: Ports
+    description: Global maritime port search.
+  - name: Reports and Usage
+    description: Asynchronous bulk report jobs and account usage statistics.
+paths:
+  /vessel:
+    get:
+      operationId: getVessel
+      tags:
+        - Live Tracking
+      summary: Basic live ship tracking
+      description: >-
+        Returns the latest real-time AIS data for a single vessel identified by
+        uuid, mmsi, or imo - name, identifiers, country code, type and subtype,
+        latitude, longitude, speed, course, heading, navigational status,
+        destination, and position timestamp. Average response time is 0.005
+        seconds. Deducts 1 credit per request.
+      parameters:
+        - $ref: '#/components/parameters/Uuid'
+        - $ref: '#/components/parameters/Mmsi'
+        - $ref: '#/components/parameters/Imo'
+      responses:
+        '200':
+          description: Latest AIS position data for the vessel.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VesselPositionResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /vessel_pro:
+    get:
+      operationId: getVesselPro
+      tags:
+        - Live Tracking
+      summary: Pro live ship tracking with ETA
+      description: >-
+        Returns everything the basic /vessel endpoint returns plus estimated
+        time of arrival (ETA), actual time of departure (ATD), current draft,
+        and UN/LOCODE destination and departure ports. Average response time
+        is 0.9 seconds. Deducts 1 credit per request.
+      parameters:
+        - $ref: '#/components/parameters/Uuid'
+        - $ref: '#/components/parameters/Mmsi'
+        - $ref: '#/components/parameters/Imo'
+      responses:
+        '200':
+          description: Extended AIS position and voyage data for the vessel.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VesselProResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /vessel_bulk:
+    get:
+      operationId: getVesselBulk
+      tags:
+        - Live Tracking
+      summary: Bulk live ship tracking
+      description: >-
+        Tracks up to 100 vessels in a single call. Repeat the uuid, mmsi,
+        and/or imo parameters for each vessel to track. Deducts 1 credit per
+        successfully returned vessel.
+      parameters:
+        - name: uuid
+          in: query
+          description: Datalastic vessel UUID. Repeatable, up to 100 vessels per call.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          explode: true
+        - name: mmsi
+          in: query
+          description: Vessel MMSI (9-digit). Repeatable, up to 100 vessels per call.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          explode: true
+        - name: imo
+          in: query
+          description: Vessel IMO number (7-digit). Repeatable, up to 100 vessels per call.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          explode: true
+      responses:
+        '200':
+          description: Latest AIS position data for each requested vessel.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VesselListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /vessel_inradius:
+    get:
+      operationId: getVesselsInRadius
+      tags:
+        - Zone Traffic
+      summary: Vessels within a radius
+      description: >-
+        Returns all vessels within a radius (maximum 50 nautical miles) around
+        either a static point - lat/lon coordinates, a port_uuid, or a
+        port_unlocode - or a dynamic center defined by a moving vessel's uuid,
+        mmsi, or imo. Results can be filtered by vessel type, specific subtype,
+        exclusions, and navigational status. Deducts 1 credit per vessel found
+        (maximum 500).
+      parameters:
+        - name: lat
+          in: query
+          description: Latitude of the static center point. Requires lon.
+          required: false
+          schema:
+            type: number
+        - name: lon
+          in: query
+          description: Longitude of the static center point. Requires lat.
+          required: false
+          schema:
+            type: number
+        - name: port_uuid
+          in: query
+          description: Port UUID to use as the center point.
+          required: false
+          schema:
+            type: string
+        - name: port_unlocode
+          in: query
+          description: Port UN/LOCODE to use as the center point.
+          required: false
+          schema:
+            type: string
+        - name: uuid
+          in: query
+          description: Vessel UUID to use as a dynamic (moving) center point.
+          required: false
+          schema:
+            type: string
+        - name: mmsi
+          in: query
+          description: Vessel MMSI to use as a dynamic (moving) center point.
+          required: false
+          schema:
+            type: string
+        - name: imo
+          in: query
+          description: Vessel IMO number to use as a dynamic (moving) center point.
+          required: false
+          schema:
+            type: string
+        - name: radius
+          in: query
+          description: Search radius in nautical miles. Maximum 50 NM.
+          required: true
+          schema:
+            type: number
+            maximum: 50
+        - $ref: '#/components/parameters/VesselType'
+        - $ref: '#/components/parameters/VesselTypeSpecific'
+        - name: exclude
+          in: query
+          description: Vessel types to exclude from the results.
+          required: false
+          schema:
+            type: string
+        - name: nav_status
+          in: query
+          description: Numeric navigational status code to filter by.
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Vessels currently inside the requested zone.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VesselListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /inradius_history:
+    get:
+      operationId: getInRadiusHistory
+      tags:
+        - Historical
+      summary: Historical vessel traffic within a radius
+      description: >-
+        Replays past vessel traffic for a zone. Cost is calculated as the
+        number of days multiplied by the number of vessels per day (maximum
+        500 vessels per day).
+      parameters:
+        - name: lat
+          in: query
+          description: Latitude of the zone center point. Requires lon.
+          required: false
+          schema:
+            type: number
+        - name: lon
+          in: query
+          description: Longitude of the zone center point. Requires lat.
+          required: false
+          schema:
+            type: number
+        - name: port_uuid
+          in: query
+          description: Port UUID to use as the zone center point.
+          required: false
+          schema:
+            type: string
+        - name: port_unlocode
+          in: query
+          description: Port UN/LOCODE to use as the zone center point.
+          required: false
+          schema:
+            type: string
+        - name: radius
+          in: query
+          description: Search radius in nautical miles. Maximum 50 NM.
+          required: true
+          schema:
+            type: number
+            maximum: 50
+        - $ref: '#/components/parameters/Days'
+        - $ref: '#/components/parameters/From'
+        - $ref: '#/components/parameters/To'
+      responses:
+        '200':
+          description: Historical vessel traffic for the requested zone and period.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VesselListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /vessel_history:
+    get:
+      operationId: getVesselHistory
+      tags:
+        - Historical
+      summary: Historical vessel track
+      description: >-
+        Returns past AIS positions for a vessel identified by uuid, mmsi, or
+        imo, filtered by a days lookback or an explicit from/to date range in
+        YYYY-MM-DD format. A maximum of 31 days may be requested from the from
+        date. Each day of data per vessel deducts 1 credit.
+      parameters:
+        - $ref: '#/components/parameters/Uuid'
+        - $ref: '#/components/parameters/Mmsi'
+        - $ref: '#/components/parameters/Imo'
+        - $ref: '#/components/parameters/Days'
+        - $ref: '#/components/parameters/From'
+        - $ref: '#/components/parameters/To'
+      responses:
+        '200':
+          description: Historical track positions for the vessel.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VesselHistoryResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /vessel_info:
+    get:
+      operationId: getVesselInfo
+      tags:
+        - Vessel Data
+      summary: Ship specifications
+      description: >-
+        Returns static specifications for a single vessel identified by uuid,
+        mmsi, or imo - MMSI, IMO, country name, call sign, ship type and
+        subtype, gross tonnage, deadweight, TEU, length, breadth, year built,
+        and home port. Deducts 1 credit per vessel.
+      parameters:
+        - $ref: '#/components/parameters/Uuid'
+        - $ref: '#/components/parameters/Mmsi'
+        - $ref: '#/components/parameters/Imo'
+      responses:
+        '200':
+          description: Static vessel specification data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VesselInfoResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /vessel_find:
+    get:
+      operationId: findVessels
+      tags:
+        - Vessel Data
+      summary: Vessel finder search
+      description: >-
+        Searches the 750,000+ ship database by name (exact or fuzzy match),
+        type, specific subtype, flag country, gross tonnage, deadweight,
+        dimensions, and year built. Deducts 1 credit per vessel found.
+      parameters:
+        - name: name
+          in: query
+          description: Vessel name to search for.
+          required: false
+          schema:
+            type: string
+        - name: fuzzy
+          in: query
+          description: >-
+            Set to 1 for similar-name matching (Eric matches Erica); 0 for
+            exact name matching.
+          required: false
+          schema:
+            type: integer
+            enum: [0, 1]
+        - $ref: '#/components/parameters/VesselType'
+        - $ref: '#/components/parameters/VesselTypeSpecific'
+        - name: country_iso
+          in: query
+          description: Flag country of the vessels as a 2-letter ISO code.
+          required: false
+          schema:
+            type: string
+        - name: gross_tonnage_min
+          in: query
+          description: Minimum gross tonnage.
+          required: false
+          schema:
+            type: number
+        - name: gross_tonnage_max
+          in: query
+          description: Maximum gross tonnage.
+          required: false
+          schema:
+            type: number
+        - name: deadweight_min
+          in: query
+          description: Minimum deadweight tonnage.
+          required: false
+          schema:
+            type: number
+        - name: deadweight_max
+          in: query
+          description: Maximum deadweight tonnage.
+          required: false
+          schema:
+            type: number
+        - name: length_min
+          in: query
+          description: Minimum vessel length in meters.
+          required: false
+          schema:
+            type: number
+        - name: length_max
+          in: query
+          description: Maximum vessel length in meters.
+          required: false
+          schema:
+            type: number
+        - name: breadth_min
+          in: query
+          description: Minimum vessel breadth in meters.
+          required: false
+          schema:
+            type: number
+        - name: breadth_max
+          in: query
+          description: Maximum vessel breadth in meters.
+          required: false
+          schema:
+            type: number
+        - name: year_built_min
+          in: query
+          description: Earliest year built.
+          required: false
+          schema:
+            type: integer
+        - name: year_built_max
+          in: query
+          description: Latest year built.
+          required: false
+          schema:
+            type: integer
+        - name: next
+          in: query
+          description: Pagination cursor for retrieving the next page of results.
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Vessels matching the search criteria.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VesselFindResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /port_find:
+    get:
+      operationId: findPorts
+      tags:
+        - Ports
+      summary: Port finder search
+      description: >-
+        Searches global maritime ports by name and returns port name, country
+        ISO code and name, UN/LOCODE, port type, latitude/longitude, and
+        administrative area levels. Returned port UUIDs and UN/LOCODEs can be
+        used as center points for /vessel_inradius. Deducts 1 credit per port
+        found.
+      parameters:
+        - name: name
+          in: query
+          description: Port name to search for (for example rotterdam).
+          required: true
+          schema:
+            type: string
+        - name: fuzzy
+          in: query
+          description: Set to 1 for similar-name matching; 0 for exact matching.
+          required: false
+          schema:
+            type: integer
+            enum: [0, 1]
+      responses:
+        '200':
+          description: Ports matching the search criteria.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortFindResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /report:
+    get:
+      operationId: getReport
+      tags:
+        - Reports and Usage
+      summary: Check report status or list reports
+      description: >-
+        Polls the status of an asynchronous report job by report_id. Status
+        progresses through PENDING, IN_PROGRESS, and DONE; when DONE, a
+        result_url download link is returned. Pass report_id=_all to list all
+        of your reports. Checking status is free.
+      parameters:
+        - name: report_id
+          in: query
+          description: The report identifier to check, or _all to list all reports.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Report job status, including result_url when DONE.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      operationId: submitReport
+      tags:
+        - Reports and Usage
+      summary: Submit an asynchronous report job
+      description: >-
+        Submits a bulk report job as a JSON payload. The response includes a
+        report_id used to poll GET /report for status. Report submission
+        deducts 1 credit; large dataset reports such as a full vessel list
+        (5,000 credits) or port list (500 credits) are priced per dataset.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Report job definition payload.
+      responses:
+        '200':
+          description: The submitted report job with its report_id and status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /stat:
+    get:
+      operationId: getUsageStats
+      tags:
+        - Reports and Usage
+      summary: API usage statistics
+      description: >-
+        Returns your current monthly credit consumption and request statistics
+        for the api-key. Usage requests are free and do not deduct credits.
+      responses:
+        '200':
+          description: Current monthly usage statistics for the API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsageStats'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: query
+      name: api-key
+      description: >-
+        Personal API key issued with a Datalastic subscription. Passed as the
+        api-key query parameter on every request.
+  parameters:
+    Uuid:
+      name: uuid
+      in: query
+      description: Datalastic vessel UUID.
+      required: false
+      schema:
+        type: string
+    Mmsi:
+      name: mmsi
+      in: query
+      description: Vessel Maritime Mobile Service Identity (9-digit number).
+      required: false
+      schema:
+        type: string
+    Imo:
+      name: imo
+      in: query
+      description: Vessel International Maritime Organization number (7-digit).
+      required: false
+      schema:
+        type: string
+    Days:
+      name: days
+      in: query
+      description: >-
+        Number of days back from today to return data for (for example days=5
+        returns the last 5 days).
+      required: false
+      schema:
+        type: integer
+    From:
+      name: from
+      in: query
+      description: >-
+        Start date for the data in YYYY-MM-DD format. A maximum of 31 days may
+        be requested from this date.
+      required: false
+      schema:
+        type: string
+        format: date
+    To:
+      name: to
+      in: query
+      description: End date for the data in YYYY-MM-DD format.
+      required: false
+      schema:
+        type: string
+        format: date
+    VesselType:
+      name: type
+      in: query
+      description: Vessel type filter (for example Cargo, Tanker, Fishing).
+      required: false
+      schema:
+        type: string
+    VesselTypeSpecific:
+      name: type_specific
+      in: query
+      description: >-
+        Vessel subtype filter (for example Crude Oil Tanker). Can be used on
+        its own or combined with type. Use _empty_ to include or exclude
+        vessels whose type is NULL.
+      required: false
+      schema:
+        type: string
+  responses:
+    Unauthorized:
+      description: Missing or invalid api-key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: No vessel or resource matched the supplied identifier.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    TooManyRequests:
+      description: >-
+        Rate limit exceeded. All plans share a limit of 600 API calls per
+        minute.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    VesselPosition:
+      type: object
+      description: Real-time AIS position data for a vessel.
+      properties:
+        uuid:
+          type: string
+          description: Datalastic vessel UUID.
+        name:
+          type: string
+          description: Vessel name.
+        mmsi:
+          type: string
+          description: Maritime Mobile Service Identity.
+        imo:
+          type: string
+          description: International Maritime Organization number.
+        country_iso:
+          type: string
+          description: Flag country ISO code.
+        type:
+          type: string
+          description: Vessel type.
+        type_specific:
+          type: string
+          description: Vessel subtype.
+        lat:
+          type: number
+          description: Latitude of the last reported position.
+        lon:
+          type: number
+          description: Longitude of the last reported position.
+        speed:
+          type: number
+          description: Speed over ground in knots.
+        course:
+          type: number
+          description: Course over ground in degrees.
+        heading:
+          type: number
+          description: True heading in degrees.
+        navigation_status:
+          type: string
+          description: AIS navigational status.
+        destination:
+          type: string
+          description: Reported destination.
+        last_position_epoch:
+          type: integer
+          description: Unix timestamp of the last position report.
+        last_position_UTC:
+          type: string
+          description: UTC timestamp of the last position report.
+    VesselProPosition:
+      allOf:
+        - $ref: '#/components/schemas/VesselPosition'
+        - type: object
+          description: Extended voyage fields returned by /vessel_pro.
+          properties:
+            eta_UTC:
+              type: string
+              description: Estimated time of arrival (UTC).
+            atd_UTC:
+              type: string
+              description: Actual time of departure (UTC).
+            current_draught:
+              type: number
+              description: Current draft in meters.
+            dest_port_unlocode:
+              type: string
+              description: UN/LOCODE of the destination port.
+            dep_port_unlocode:
+              type: string
+              description: UN/LOCODE of the departure port.
+    VesselInfo:
+      type: object
+      description: Static ship specification data.
+      properties:
+        uuid:
+          type: string
+          description: Datalastic vessel UUID.
+        name:
+          type: string
+          description: Vessel name.
+        mmsi:
+          type: string
+          description: Maritime Mobile Service Identity.
+        imo:
+          type: string
+          description: International Maritime Organization number.
+        country_name:
+          type: string
+          description: Flag country name.
+        callsign:
+          type: string
+          description: Radio call sign.
+        type:
+          type: string
+          description: Ship type.
+        type_specific:
+          type: string
+          description: Ship subtype.
+        gross_tonnage:
+          type: number
+          description: Gross tonnage.
+        deadweight:
+          type: number
+          description: Deadweight tonnage.
+        teu:
+          type: number
+          description: Container capacity in TEU.
+        length:
+          type: number
+          description: Length in meters.
+        breadth:
+          type: number
+          description: Breadth in meters.
+        year_built:
+          type: integer
+          description: Year the vessel was built.
+        home_port:
+          type: string
+          description: Registered home port.
+    Port:
+      type: object
+      description: Maritime port record.
+      properties:
+        uuid:
+          type: string
+          description: Datalastic port UUID.
+        name:
+          type: string
+          description: Port name.
+        country_iso:
+          type: string
+          description: Country ISO code.
+        country:
+          type: string
+          description: Country name.
+        unlocode:
+          type: string
+          description: UN/LOCODE of the port.
+        port_type:
+          type: string
+          description: Port type.
+        lat:
+          type: number
+          description: Port latitude.
+        lon:
+          type: number
+          description: Port longitude.
+        area_level_1:
+          type: string
+          description: First administrative area level.
+        area_level_2:
+          type: string
+          description: Second administrative area level.
+    Report:
+      type: object
+      description: Asynchronous report job.
+      properties:
+        report_id:
+          type: string
+          description: Unique report identifier.
+        status:
+          type: string
+          description: Job status.
+          enum:
+            - PENDING
+            - IN_PROGRESS
+            - DONE
+        result_url:
+          type: string
+          description: Download link for the finished report (present when DONE).
+    UsageStats:
+      type: object
+      description: Monthly credit consumption and request statistics.
+      properties:
+        credits_used:
+          type: integer
+          description: Database credits consumed this month.
+        credits_limit:
+          type: integer
+          description: Monthly credit allowance for the plan.
+        requests:
+          type: integer
+          description: API requests made this month.
+    VesselPositionResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/VesselPosition'
+        meta:
+          $ref: '#/components/schemas/Meta'
+    VesselProResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/VesselProPosition'
+        meta:
+          $ref: '#/components/schemas/Meta'
+    VesselListResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            vessels:
+              type: array
+              items:
+                $ref: '#/components/schemas/VesselPosition'
+            total:
+              type: integer
+              description: Number of vessels returned.
+        meta:
+          $ref: '#/components/schemas/Meta'
+    VesselHistoryResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            uuid:
+              type: string
+              description: Datalastic vessel UUID.
+            name:
+              type: string
+              description: Vessel name.
+            mmsi:
+              type: string
+              description: Maritime Mobile Service Identity.
+            imo:
+              type: string
+              description: International Maritime Organization number.
+            positions:
+              type: array
+              description: Historical track positions.
+              items:
+                type: object
+                properties:
+                  lat:
+                    type: number
+                  lon:
+                    type: number
+                  speed:
+                    type: number
+                  course:
+                    type: number
+                  heading:
+                    type: number
+                  destination:
+                    type: string
+                  last_position_epoch:
+                    type: integer
+                  last_position_UTC:
+                    type: string
+        meta:
+          $ref: '#/components/schemas/Meta'
+    VesselFindResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/VesselInfo'
+        meta:
+          $ref: '#/components/schemas/Meta'
+    VesselInfoResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/VesselInfo'
+        meta:
+          $ref: '#/components/schemas/Meta'
+    PortFindResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Port'
+        meta:
+          $ref: '#/components/schemas/Meta'
+    Meta:
+      type: object
+      description: Response metadata.
+      properties:
+        duration:
+          type: number
+          description: Server processing time in seconds.
+        endpoint:
+          type: string
+          description: The endpoint that served the request.
+        success:
+          type: boolean
+          description: Whether the request succeeded.
+    Error:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            success:
+              type: boolean
+            error:
+              type: string
+              description: Error message, for example Too Many Requests.
