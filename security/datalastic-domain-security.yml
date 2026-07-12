@@ -1,0 +1,21 @@
+generated: '2026-07-11'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+hosts:
+- host: datalastic.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Aug 23 18:02:35 2026 GMT
+  hsts: false
+- host: api.datalastic.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Oct  2 18:50:43 2026 GMT
+  hsts: false
+domains:
+- domain: datalastic.com
+  dnssec: false
+  caa: []
+  spf: true
+  dmarc: true
+  dmarc_policy: none

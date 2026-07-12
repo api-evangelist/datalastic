@@ -141,6 +141,10 @@ apis:
     reports. GET /stat returns current monthly credit consumption and request
     statistics at no credit cost.
 common:
+- type: DomainSecurity
+  url: security/datalastic-domain-security.yml
+- type: Authentication
+  url: authentication/datalastic-authentication.yml
 - type: LinkedIn
   url: https://www.linkedin.com/company/datalastic/
 - type: Website

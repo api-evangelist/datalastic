@@ -1,0 +1,17 @@
+generated: '2026-07-11'
+method: derived
+source: openapi/datalastic-openapi.yml
+summary:
+  types:
+  - apiKey
+  api_key_in:
+  - query
+schemes:
+- name: apiKey
+  type: apiKey
+  in: query
+  parameter: api-key
+  description: Personal API key issued with a Datalastic subscription. Passed as the api-key
+    query parameter on every request.
+  sources:
+  - openapi/datalastic-openapi.yml
