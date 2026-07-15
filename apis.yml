@@ -141,6 +141,8 @@ apis:
     reports. GET /stat returns current monthly credit consumption and request
     statistics at no credit cost.
 common:
+- type: AgenticAccess
+  url: agentic-access/datalastic-agentic-access.yml
 - type: DomainSecurity
   url: security/datalastic-domain-security.yml
 - type: Authentication
