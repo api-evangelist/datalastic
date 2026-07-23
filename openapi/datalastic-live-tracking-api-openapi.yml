@@ -1,0 +1,286 @@
+openapi: 3.0.3
+info:
+  title: Datalastic Maritime Historical Live Tracking API
+  description: Datalastic provides real-time AIS vessel tracking, historical ship movements, vessel specifications, and global port data over REST. A database of 750,000+ ships is queryable by MMSI, IMO, or Datalastic UUID. All endpoints are served from https://api.datalastic.com/api/v0 and authenticate with an api-key query parameter tied to a subscription plan. Usage is metered in monthly database credits - most endpoints deduct one credit per vessel or port returned, and historical endpoints deduct one credit per vessel per day of data. All plans share a limit of 600 API calls per minute.
+  version: v0
+  contact:
+    name: Datalastic
+    url: https://datalastic.com
+servers:
+- url: https://api.datalastic.com/api/v0
+  description: Datalastic production API
+security:
+- apiKey: []
+tags:
+- name: Live Tracking
+  description: Real-time AIS vessel position and voyage data.
+paths:
+  /vessel:
+    get:
+      operationId: getVessel
+      tags:
+      - Live Tracking
+      summary: Basic live ship tracking
+      description: Returns the latest real-time AIS data for a single vessel identified by uuid, mmsi, or imo - name, identifiers, country code, type and subtype, latitude, longitude, speed, course, heading, navigational status, destination, and position timestamp. Average response time is 0.005 seconds. Deducts 1 credit per request.
+      parameters:
+      - $ref: '#/components/parameters/Uuid'
+      - $ref: '#/components/parameters/Mmsi'
+      - $ref: '#/components/parameters/Imo'
+      responses:
+        '200':
+          description: Latest AIS position data for the vessel.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VesselPositionResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /vessel_pro:
+    get:
+      operationId: getVesselPro
+      tags:
+      - Live Tracking
+      summary: Pro live ship tracking with ETA
+      description: Returns everything the basic /vessel endpoint returns plus estimated time of arrival (ETA), actual time of departure (ATD), current draft, and UN/LOCODE destination and departure ports. Average response time is 0.9 seconds. Deducts 1 credit per request.
+      parameters:
+      - $ref: '#/components/parameters/Uuid'
+      - $ref: '#/components/parameters/Mmsi'
+      - $ref: '#/components/parameters/Imo'
+      responses:
+        '200':
+          description: Extended AIS position and voyage data for the vessel.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VesselProResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /vessel_bulk:
+    get:
+      operationId: getVesselBulk
+      tags:
+      - Live Tracking
+      summary: Bulk live ship tracking
+      description: Tracks up to 100 vessels in a single call. Repeat the uuid, mmsi, and/or imo parameters for each vessel to track. Deducts 1 credit per successfully returned vessel.
+      parameters:
+      - name: uuid
+        in: query
+        description: Datalastic vessel UUID. Repeatable, up to 100 vessels per call.
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+        explode: true
+      - name: mmsi
+        in: query
+        description: Vessel MMSI (9-digit). Repeatable, up to 100 vessels per call.
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+        explode: true
+      - name: imo
+        in: query
+        description: Vessel IMO number (7-digit). Repeatable, up to 100 vessels per call.
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+        explode: true
+      responses:
+        '200':
+          description: Latest AIS position data for each requested vessel.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VesselListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+components:
+  schemas:
+    VesselProResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/VesselProPosition'
+        meta:
+          $ref: '#/components/schemas/Meta'
+    Meta:
+      type: object
+      description: Response metadata.
+      properties:
+        duration:
+          type: number
+          description: Server processing time in seconds.
+        endpoint:
+          type: string
+          description: The endpoint that served the request.
+        success:
+          type: boolean
+          description: Whether the request succeeded.
+    VesselPositionResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/VesselPosition'
+        meta:
+          $ref: '#/components/schemas/Meta'
+    VesselProPosition:
+      allOf:
+      - $ref: '#/components/schemas/VesselPosition'
+      - type: object
+        description: Extended voyage fields returned by /vessel_pro.
+        properties:
+          eta_UTC:
+            type: string
+            description: Estimated time of arrival (UTC).
+          atd_UTC:
+            type: string
+            description: Actual time of departure (UTC).
+          current_draught:
+            type: number
+            description: Current draft in meters.
+          dest_port_unlocode:
+            type: string
+            description: UN/LOCODE of the destination port.
+          dep_port_unlocode:
+            type: string
+            description: UN/LOCODE of the departure port.
+    VesselPosition:
+      type: object
+      description: Real-time AIS position data for a vessel.
+      properties:
+        uuid:
+          type: string
+          description: Datalastic vessel UUID.
+        name:
+          type: string
+          description: Vessel name.
+        mmsi:
+          type: string
+          description: Maritime Mobile Service Identity.
+        imo:
+          type: string
+          description: International Maritime Organization number.
+        country_iso:
+          type: string
+          description: Flag country ISO code.
+        type:
+          type: string
+          description: Vessel type.
+        type_specific:
+          type: string
+          description: Vessel subtype.
+        lat:
+          type: number
+          description: Latitude of the last reported position.
+        lon:
+          type: number
+          description: Longitude of the last reported position.
+        speed:
+          type: number
+          description: Speed over ground in knots.
+        course:
+          type: number
+          description: Course over ground in degrees.
+        heading:
+          type: number
+          description: True heading in degrees.
+        navigation_status:
+          type: string
+          description: AIS navigational status.
+        destination:
+          type: string
+          description: Reported destination.
+        last_position_epoch:
+          type: integer
+          description: Unix timestamp of the last position report.
+        last_position_UTC:
+          type: string
+          description: UTC timestamp of the last position report.
+    Error:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            success:
+              type: boolean
+            error:
+              type: string
+              description: Error message, for example Too Many Requests.
+    VesselListResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            vessels:
+              type: array
+              items:
+                $ref: '#/components/schemas/VesselPosition'
+            total:
+              type: integer
+              description: Number of vessels returned.
+        meta:
+          $ref: '#/components/schemas/Meta'
+  responses:
+    TooManyRequests:
+      description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid api-key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: No vessel or resource matched the supplied identifier.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  parameters:
+    Mmsi:
+      name: mmsi
+      in: query
+      description: Vessel Maritime Mobile Service Identity (9-digit number).
+      required: false
+      schema:
+        type: string
+    Imo:
+      name: imo
+      in: query
+      description: Vessel International Maritime Organization number (7-digit).
+      required: false
+      schema:
+        type: string
+    Uuid:
+      name: uuid
+      in: query
+      description: Datalastic vessel UUID.
+      required: false
+      schema:
+        type: string
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: query
+      name: api-key
+      description: Personal API key issued with a Datalastic subscription. Passed as the api-key query parameter on every request.

@@ -1,0 +1,301 @@
+openapi: 3.0.3
+info:
+  title: Datalastic Maritime Historical Vessel Data API
+  description: Datalastic provides real-time AIS vessel tracking, historical ship movements, vessel specifications, and global port data over REST. A database of 750,000+ ships is queryable by MMSI, IMO, or Datalastic UUID. All endpoints are served from https://api.datalastic.com/api/v0 and authenticate with an api-key query parameter tied to a subscription plan. Usage is metered in monthly database credits - most endpoints deduct one credit per vessel or port returned, and historical endpoints deduct one credit per vessel per day of data. All plans share a limit of 600 API calls per minute.
+  version: v0
+  contact:
+    name: Datalastic
+    url: https://datalastic.com
+servers:
+- url: https://api.datalastic.com/api/v0
+  description: Datalastic production API
+security:
+- apiKey: []
+tags:
+- name: Vessel Data
+  description: Static ship specifications and vessel search.
+paths:
+  /vessel_info:
+    get:
+      operationId: getVesselInfo
+      tags:
+      - Vessel Data
+      summary: Ship specifications
+      description: Returns static specifications for a single vessel identified by uuid, mmsi, or imo - MMSI, IMO, country name, call sign, ship type and subtype, gross tonnage, deadweight, TEU, length, breadth, year built, and home port. Deducts 1 credit per vessel.
+      parameters:
+      - $ref: '#/components/parameters/Uuid'
+      - $ref: '#/components/parameters/Mmsi'
+      - $ref: '#/components/parameters/Imo'
+      responses:
+        '200':
+          description: Static vessel specification data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VesselInfoResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /vessel_find:
+    get:
+      operationId: findVessels
+      tags:
+      - Vessel Data
+      summary: Vessel finder search
+      description: Searches the 750,000+ ship database by name (exact or fuzzy match), type, specific subtype, flag country, gross tonnage, deadweight, dimensions, and year built. Deducts 1 credit per vessel found.
+      parameters:
+      - name: name
+        in: query
+        description: Vessel name to search for.
+        required: false
+        schema:
+          type: string
+      - name: fuzzy
+        in: query
+        description: Set to 1 for similar-name matching (Eric matches Erica); 0 for exact name matching.
+        required: false
+        schema:
+          type: integer
+          enum:
+          - 0
+          - 1
+      - $ref: '#/components/parameters/VesselType'
+      - $ref: '#/components/parameters/VesselTypeSpecific'
+      - name: country_iso
+        in: query
+        description: Flag country of the vessels as a 2-letter ISO code.
+        required: false
+        schema:
+          type: string
+      - name: gross_tonnage_min
+        in: query
+        description: Minimum gross tonnage.
+        required: false
+        schema:
+          type: number
+      - name: gross_tonnage_max
+        in: query
+        description: Maximum gross tonnage.
+        required: false
+        schema:
+          type: number
+      - name: deadweight_min
+        in: query
+        description: Minimum deadweight tonnage.
+        required: false
+        schema:
+          type: number
+      - name: deadweight_max
+        in: query
+        description: Maximum deadweight tonnage.
+        required: false
+        schema:
+          type: number
+      - name: length_min
+        in: query
+        description: Minimum vessel length in meters.
+        required: false
+        schema:
+          type: number
+      - name: length_max
+        in: query
+        description: Maximum vessel length in meters.
+        required: false
+        schema:
+          type: number
+      - name: breadth_min
+        in: query
+        description: Minimum vessel breadth in meters.
+        required: false
+        schema:
+          type: number
+      - name: breadth_max
+        in: query
+        description: Maximum vessel breadth in meters.
+        required: false
+        schema:
+          type: number
+      - name: year_built_min
+        in: query
+        description: Earliest year built.
+        required: false
+        schema:
+          type: integer
+      - name: year_built_max
+        in: query
+        description: Latest year built.
+        required: false
+        schema:
+          type: integer
+      - name: next
+        in: query
+        description: Pagination cursor for retrieving the next page of results.
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Vessels matching the search criteria.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VesselFindResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+components:
+  parameters:
+    VesselTypeSpecific:
+      name: type_specific
+      in: query
+      description: Vessel subtype filter (for example Crude Oil Tanker). Can be used on its own or combined with type. Use _empty_ to include or exclude vessels whose type is NULL.
+      required: false
+      schema:
+        type: string
+    Mmsi:
+      name: mmsi
+      in: query
+      description: Vessel Maritime Mobile Service Identity (9-digit number).
+      required: false
+      schema:
+        type: string
+    VesselType:
+      name: type
+      in: query
+      description: Vessel type filter (for example Cargo, Tanker, Fishing).
+      required: false
+      schema:
+        type: string
+    Imo:
+      name: imo
+      in: query
+      description: Vessel International Maritime Organization number (7-digit).
+      required: false
+      schema:
+        type: string
+    Uuid:
+      name: uuid
+      in: query
+      description: Datalastic vessel UUID.
+      required: false
+      schema:
+        type: string
+  schemas:
+    Meta:
+      type: object
+      description: Response metadata.
+      properties:
+        duration:
+          type: number
+          description: Server processing time in seconds.
+        endpoint:
+          type: string
+          description: The endpoint that served the request.
+        success:
+          type: boolean
+          description: Whether the request succeeded.
+    VesselInfo:
+      type: object
+      description: Static ship specification data.
+      properties:
+        uuid:
+          type: string
+          description: Datalastic vessel UUID.
+        name:
+          type: string
+          description: Vessel name.
+        mmsi:
+          type: string
+          description: Maritime Mobile Service Identity.
+        imo:
+          type: string
+          description: International Maritime Organization number.
+        country_name:
+          type: string
+          description: Flag country name.
+        callsign:
+          type: string
+          description: Radio call sign.
+        type:
+          type: string
+          description: Ship type.
+        type_specific:
+          type: string
+          description: Ship subtype.
+        gross_tonnage:
+          type: number
+          description: Gross tonnage.
+        deadweight:
+          type: number
+          description: Deadweight tonnage.
+        teu:
+          type: number
+          description: Container capacity in TEU.
+        length:
+          type: number
+          description: Length in meters.
+        breadth:
+          type: number
+          description: Breadth in meters.
+        year_built:
+          type: integer
+          description: Year the vessel was built.
+        home_port:
+          type: string
+          description: Registered home port.
+    VesselFindResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/VesselInfo'
+        meta:
+          $ref: '#/components/schemas/Meta'
+    VesselInfoResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/VesselInfo'
+        meta:
+          $ref: '#/components/schemas/Meta'
+    Error:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            success:
+              type: boolean
+            error:
+              type: string
+              description: Error message, for example Too Many Requests.
+  responses:
+    TooManyRequests:
+      description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid api-key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: No vessel or resource matched the supplied identifier.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: query
+      name: api-key
+      description: Personal API key issued with a Datalastic subscription. Passed as the api-key query parameter on every request.

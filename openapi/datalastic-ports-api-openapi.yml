@@ -1,0 +1,139 @@
+openapi: 3.0.3
+info:
+  title: Datalastic Maritime Historical Ports API
+  description: Datalastic provides real-time AIS vessel tracking, historical ship movements, vessel specifications, and global port data over REST. A database of 750,000+ ships is queryable by MMSI, IMO, or Datalastic UUID. All endpoints are served from https://api.datalastic.com/api/v0 and authenticate with an api-key query parameter tied to a subscription plan. Usage is metered in monthly database credits - most endpoints deduct one credit per vessel or port returned, and historical endpoints deduct one credit per vessel per day of data. All plans share a limit of 600 API calls per minute.
+  version: v0
+  contact:
+    name: Datalastic
+    url: https://datalastic.com
+servers:
+- url: https://api.datalastic.com/api/v0
+  description: Datalastic production API
+security:
+- apiKey: []
+tags:
+- name: Ports
+  description: Global maritime port search.
+paths:
+  /port_find:
+    get:
+      operationId: findPorts
+      tags:
+      - Ports
+      summary: Port finder search
+      description: Searches global maritime ports by name and returns port name, country ISO code and name, UN/LOCODE, port type, latitude/longitude, and administrative area levels. Returned port UUIDs and UN/LOCODEs can be used as center points for /vessel_inradius. Deducts 1 credit per port found.
+      parameters:
+      - name: name
+        in: query
+        description: Port name to search for (for example rotterdam).
+        required: true
+        schema:
+          type: string
+      - name: fuzzy
+        in: query
+        description: Set to 1 for similar-name matching; 0 for exact matching.
+        required: false
+        schema:
+          type: integer
+          enum:
+          - 0
+          - 1
+      responses:
+        '200':
+          description: Ports matching the search criteria.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortFindResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+components:
+  schemas:
+    Port:
+      type: object
+      description: Maritime port record.
+      properties:
+        uuid:
+          type: string
+          description: Datalastic port UUID.
+        name:
+          type: string
+          description: Port name.
+        country_iso:
+          type: string
+          description: Country ISO code.
+        country:
+          type: string
+          description: Country name.
+        unlocode:
+          type: string
+          description: UN/LOCODE of the port.
+        port_type:
+          type: string
+          description: Port type.
+        lat:
+          type: number
+          description: Port latitude.
+        lon:
+          type: number
+          description: Port longitude.
+        area_level_1:
+          type: string
+          description: First administrative area level.
+        area_level_2:
+          type: string
+          description: Second administrative area level.
+    Meta:
+      type: object
+      description: Response metadata.
+      properties:
+        duration:
+          type: number
+          description: Server processing time in seconds.
+        endpoint:
+          type: string
+          description: The endpoint that served the request.
+        success:
+          type: boolean
+          description: Whether the request succeeded.
+    PortFindResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Port'
+        meta:
+          $ref: '#/components/schemas/Meta'
+    Error:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            success:
+              type: boolean
+            error:
+              type: string
+              description: Error message, for example Too Many Requests.
+  responses:
+    TooManyRequests:
+      description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid api-key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: query
+      name: api-key
+      description: Personal API key issued with a Datalastic subscription. Passed as the api-key query parameter on every request.

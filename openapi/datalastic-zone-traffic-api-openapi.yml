@@ -1,0 +1,226 @@
+openapi: 3.0.3
+info:
+  title: Datalastic Maritime Historical Zone Traffic API
+  description: Datalastic provides real-time AIS vessel tracking, historical ship movements, vessel specifications, and global port data over REST. A database of 750,000+ ships is queryable by MMSI, IMO, or Datalastic UUID. All endpoints are served from https://api.datalastic.com/api/v0 and authenticate with an api-key query parameter tied to a subscription plan. Usage is metered in monthly database credits - most endpoints deduct one credit per vessel or port returned, and historical endpoints deduct one credit per vessel per day of data. All plans share a limit of 600 API calls per minute.
+  version: v0
+  contact:
+    name: Datalastic
+    url: https://datalastic.com
+servers:
+- url: https://api.datalastic.com/api/v0
+  description: Datalastic production API
+security:
+- apiKey: []
+tags:
+- name: Zone Traffic
+  description: Vessels within a radius of a point, port, or moving vessel.
+paths:
+  /vessel_inradius:
+    get:
+      operationId: getVesselsInRadius
+      tags:
+      - Zone Traffic
+      summary: Vessels within a radius
+      description: Returns all vessels within a radius (maximum 50 nautical miles) around either a static point - lat/lon coordinates, a port_uuid, or a port_unlocode - or a dynamic center defined by a moving vessel's uuid, mmsi, or imo. Results can be filtered by vessel type, specific subtype, exclusions, and navigational status. Deducts 1 credit per vessel found (maximum 500).
+      parameters:
+      - name: lat
+        in: query
+        description: Latitude of the static center point. Requires lon.
+        required: false
+        schema:
+          type: number
+      - name: lon
+        in: query
+        description: Longitude of the static center point. Requires lat.
+        required: false
+        schema:
+          type: number
+      - name: port_uuid
+        in: query
+        description: Port UUID to use as the center point.
+        required: false
+        schema:
+          type: string
+      - name: port_unlocode
+        in: query
+        description: Port UN/LOCODE to use as the center point.
+        required: false
+        schema:
+          type: string
+      - name: uuid
+        in: query
+        description: Vessel UUID to use as a dynamic (moving) center point.
+        required: false
+        schema:
+          type: string
+      - name: mmsi
+        in: query
+        description: Vessel MMSI to use as a dynamic (moving) center point.
+        required: false
+        schema:
+          type: string
+      - name: imo
+        in: query
+        description: Vessel IMO number to use as a dynamic (moving) center point.
+        required: false
+        schema:
+          type: string
+      - name: radius
+        in: query
+        description: Search radius in nautical miles. Maximum 50 NM.
+        required: true
+        schema:
+          type: number
+          maximum: 50
+      - $ref: '#/components/parameters/VesselType'
+      - $ref: '#/components/parameters/VesselTypeSpecific'
+      - name: exclude
+        in: query
+        description: Vessel types to exclude from the results.
+        required: false
+        schema:
+          type: string
+      - name: nav_status
+        in: query
+        description: Numeric navigational status code to filter by.
+        required: false
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Vessels currently inside the requested zone.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VesselListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+components:
+  parameters:
+    VesselTypeSpecific:
+      name: type_specific
+      in: query
+      description: Vessel subtype filter (for example Crude Oil Tanker). Can be used on its own or combined with type. Use _empty_ to include or exclude vessels whose type is NULL.
+      required: false
+      schema:
+        type: string
+    VesselType:
+      name: type
+      in: query
+      description: Vessel type filter (for example Cargo, Tanker, Fishing).
+      required: false
+      schema:
+        type: string
+  schemas:
+    Meta:
+      type: object
+      description: Response metadata.
+      properties:
+        duration:
+          type: number
+          description: Server processing time in seconds.
+        endpoint:
+          type: string
+          description: The endpoint that served the request.
+        success:
+          type: boolean
+          description: Whether the request succeeded.
+    VesselPosition:
+      type: object
+      description: Real-time AIS position data for a vessel.
+      properties:
+        uuid:
+          type: string
+          description: Datalastic vessel UUID.
+        name:
+          type: string
+          description: Vessel name.
+        mmsi:
+          type: string
+          description: Maritime Mobile Service Identity.
+        imo:
+          type: string
+          description: International Maritime Organization number.
+        country_iso:
+          type: string
+          description: Flag country ISO code.
+        type:
+          type: string
+          description: Vessel type.
+        type_specific:
+          type: string
+          description: Vessel subtype.
+        lat:
+          type: number
+          description: Latitude of the last reported position.
+        lon:
+          type: number
+          description: Longitude of the last reported position.
+        speed:
+          type: number
+          description: Speed over ground in knots.
+        course:
+          type: number
+          description: Course over ground in degrees.
+        heading:
+          type: number
+          description: True heading in degrees.
+        navigation_status:
+          type: string
+          description: AIS navigational status.
+        destination:
+          type: string
+          description: Reported destination.
+        last_position_epoch:
+          type: integer
+          description: Unix timestamp of the last position report.
+        last_position_UTC:
+          type: string
+          description: UTC timestamp of the last position report.
+    Error:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            success:
+              type: boolean
+            error:
+              type: string
+              description: Error message, for example Too Many Requests.
+    VesselListResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            vessels:
+              type: array
+              items:
+                $ref: '#/components/schemas/VesselPosition'
+            total:
+              type: integer
+              description: Number of vessels returned.
+        meta:
+          $ref: '#/components/schemas/Meta'
+  responses:
+    Unauthorized:
+      description: Missing or invalid api-key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    TooManyRequests:
+      description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: query
+      name: api-key
+      description: Personal API key issued with a Datalastic subscription. Passed as the api-key query parameter on every request.

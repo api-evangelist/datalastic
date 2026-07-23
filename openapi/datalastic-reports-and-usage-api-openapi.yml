@@ -1,0 +1,150 @@
+openapi: 3.0.3
+info:
+  title: Datalastic Maritime Historical Reports and Usage API
+  description: Datalastic provides real-time AIS vessel tracking, historical ship movements, vessel specifications, and global port data over REST. A database of 750,000+ ships is queryable by MMSI, IMO, or Datalastic UUID. All endpoints are served from https://api.datalastic.com/api/v0 and authenticate with an api-key query parameter tied to a subscription plan. Usage is metered in monthly database credits - most endpoints deduct one credit per vessel or port returned, and historical endpoints deduct one credit per vessel per day of data. All plans share a limit of 600 API calls per minute.
+  version: v0
+  contact:
+    name: Datalastic
+    url: https://datalastic.com
+servers:
+- url: https://api.datalastic.com/api/v0
+  description: Datalastic production API
+security:
+- apiKey: []
+tags:
+- name: Reports and Usage
+  description: Asynchronous bulk report jobs and account usage statistics.
+paths:
+  /report:
+    get:
+      operationId: getReport
+      tags:
+      - Reports and Usage
+      summary: Check report status or list reports
+      description: Polls the status of an asynchronous report job by report_id. Status progresses through PENDING, IN_PROGRESS, and DONE; when DONE, a result_url download link is returned. Pass report_id=_all to list all of your reports. Checking status is free.
+      parameters:
+      - name: report_id
+        in: query
+        description: The report identifier to check, or _all to list all reports.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Report job status, including result_url when DONE.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      operationId: submitReport
+      tags:
+      - Reports and Usage
+      summary: Submit an asynchronous report job
+      description: Submits a bulk report job as a JSON payload. The response includes a report_id used to poll GET /report for status. Report submission deducts 1 credit; large dataset reports such as a full vessel list (5,000 credits) or port list (500 credits) are priced per dataset.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Report job definition payload.
+      responses:
+        '200':
+          description: The submitted report job with its report_id and status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /stat:
+    get:
+      operationId: getUsageStats
+      tags:
+      - Reports and Usage
+      summary: API usage statistics
+      description: Returns your current monthly credit consumption and request statistics for the api-key. Usage requests are free and do not deduct credits.
+      responses:
+        '200':
+          description: Current monthly usage statistics for the API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsageStats'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  responses:
+    Unauthorized:
+      description: Missing or invalid api-key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    TooManyRequests:
+      description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: No vessel or resource matched the supplied identifier.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Report:
+      type: object
+      description: Asynchronous report job.
+      properties:
+        report_id:
+          type: string
+          description: Unique report identifier.
+        status:
+          type: string
+          description: Job status.
+          enum:
+          - PENDING
+          - IN_PROGRESS
+          - DONE
+        result_url:
+          type: string
+          description: Download link for the finished report (present when DONE).
+    Error:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            success:
+              type: boolean
+            error:
+              type: string
+              description: Error message, for example Too Many Requests.
+    UsageStats:
+      type: object
+      description: Monthly credit consumption and request statistics.
+      properties:
+        credits_used:
+          type: integer
+          description: Database credits consumed this month.
+        credits_limit:
+          type: integer
+          description: Monthly credit allowance for the plan.
+        requests:
+          type: integer
+          description: API requests made this month.
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: query
+      name: api-key
+      description: Personal API key issued with a Datalastic subscription. Passed as the api-key query parameter on every request.
