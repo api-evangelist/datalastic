@@ -1,0 +1,24 @@
+{
+  "provider": "datalastic",
+  "sources": [
+    "datalastic-historical-api-openapi.yml",
+    "datalastic-live-tracking-api-openapi.yml",
+    "datalastic-ports-api-openapi.yml",
+    "datalastic-reports-and-usage-api-openapi.yml",
+    "datalastic-vessel-data-api-openapi.yml",
+    "datalastic-zone-traffic-api-openapi.yml"
+  ],
+  "outputs": [
+    "datalastic-historical-api-openapi.yml",
+    "datalastic-live-tracking-api-openapi.yml",
+    "datalastic-ports-api-openapi.yml",
+    "datalastic-reports-and-usage-api-openapi.yml",
+    "datalastic-vessel-data-api-openapi.yml",
+    "datalastic-zone-traffic-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}
