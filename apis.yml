@@ -33,7 +33,7 @@ tags:
 - Shipping
 created: '2026-07-11'
 modified: '2026-07-11'
-specificationVersion: '0.19'
+specificationVersion: '0.23'
 apis:
 - aid: datalastic:datalastic-historical-api
   name: Datalastic Historical API
