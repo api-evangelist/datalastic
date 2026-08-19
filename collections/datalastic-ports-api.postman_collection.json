@@ -1,0 +1,241 @@
+{
+  "item": [
+    {
+      "id": "e189f833-abd5-4fc6-9eea-6eb7cd30968d",
+      "name": "Ports",
+      "description": {
+        "content": "Global maritime port search.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "b2a11b96-5ca2-4e7f-9812-b464b249074a",
+          "name": "Port finder search",
+          "request": {
+            "name": "Port finder search",
+            "description": {
+              "content": "Searches global maritime ports by name and returns port name, country ISO code and name, UN/LOCODE, port type, latitude/longitude, and administrative area levels. Returned port UUIDs and UN/LOCODEs can be used as center points for /vessel_inradius. Deducts 1 credit per port found.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "port_find"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "name",
+                  "value": "<string>",
+                  "description": "(Required) Port name to search for (for example rotterdam)."
+                },
+                {
+                  "disabled": false,
+                  "key": "fuzzy",
+                  "value": "<integer>",
+                  "description": "Set to 1 for similar-name matching; 0 for exact matching."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "07ff5a31-8df9-4182-bb8a-40988b815f01",
+              "name": "Ports matching the search criteria.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "port_find"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "name",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "fuzzy",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "api-key",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"uuid\": \"string\",\n      \"name\": \"string\",\n      \"country_iso\": \"string\",\n      \"country\": \"string\",\n      \"unlocode\": \"string\",\n      \"port_type\": \"string\",\n      \"lat\": 8590.99270930759,\n      \"lon\": 9707.760277272413,\n      \"area_level_1\": \"string\",\n      \"area_level_2\": \"string\"\n    },\n    {\n      \"uuid\": \"string\",\n      \"name\": \"string\",\n      \"country_iso\": \"string\",\n      \"country\": \"string\",\n      \"unlocode\": \"string\",\n      \"port_type\": \"string\",\n      \"lat\": 510.0122343784508,\n      \"lon\": 5423.432955185068,\n      \"area_level_1\": \"string\",\n      \"area_level_2\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"duration\": 236.11292221680125,\n    \"endpoint\": \"string\",\n    \"success\": true\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ae104f44-e231-4204-bd53-b9065313c10f",
+              "name": "Missing or invalid api-key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "port_find"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "name",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "fuzzy",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "api-key",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"meta\": {\n    \"success\": true,\n    \"error\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3596d21f-2d61-4f85-a542-1c47fabc73e1",
+              "name": "Rate limit exceeded. All plans share a limit of 600 API calls per minute.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "port_find"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "name",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "fuzzy",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "api-key",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"meta\": {\n    \"success\": true,\n    \"error\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.datalastic.com/api/v0",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "api-key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "query"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "6945ac2c-f019-4504-a1a8-f5e71d894060",
+    "name": "Datalastic Maritime Historical Ports API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Datalastic provides real-time AIS vessel tracking, historical ship movements, vessel specifications, and global port data over REST. A database of 750,000+ ships is queryable by MMSI, IMO, or Datalastic UUID. All endpoints are served from https://api.datalastic.com/api/v0 and authenticate with an api-key query parameter tied to a subscription plan. Usage is metered in monthly database credits - most endpoints deduct one credit per vessel or port returned, and historical endpoints deduct one credit per vessel per day of data. All plans share a limit of 600 API calls per minute.\n\nContact Support:\n Name: Datalastic",
+      "type": "text/plain"
+    }
+  }
+}

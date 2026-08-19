@@ -1,0 +1,71 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Datalastic Maritime Historical Reports and Usage API",
+    "version": "v0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "api-key",
+      "value": "{{api-key}}",
+      "placement": "query"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Reports and Usage",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Check report status or list reports",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datalastic.com/api/v0/report",
+            "params": [
+              {
+                "name": "report_id",
+                "value": "",
+                "type": "query",
+                "description": "The report identifier to check, or _all to list all reports."
+              }
+            ]
+          },
+          "docs": "Polls the status of an asynchronous report job by report_id. Status progresses through PENDING, IN_PROGRESS, and DONE; when DONE, a result_url download link is returned. Pass report_id=_all to list all of your reports. Checking status is free."
+        },
+        {
+          "info": {
+            "name": "Submit an asynchronous report job",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.datalastic.com/api/v0/report",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Submits a bulk report job as a JSON payload. The response includes a report_id used to poll GET /report for status. Report submission deducts 1 credit; large dataset reports such as a full vessel list (5,000 credits) or port list (500 credits) are priced per dataset."
+        },
+        {
+          "info": {
+            "name": "API usage statistics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datalastic.com/api/v0/stat"
+          },
+          "docs": "Returns your current monthly credit consumption and request statistics for the api-key. Usage requests are free and do not deduct credits."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

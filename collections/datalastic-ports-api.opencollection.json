@@ -1,0 +1,51 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Datalastic Maritime Historical Ports API",
+    "version": "v0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "api-key",
+      "value": "{{api-key}}",
+      "placement": "query"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Ports",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Port finder search",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datalastic.com/api/v0/port_find",
+            "params": [
+              {
+                "name": "name",
+                "value": "",
+                "type": "query",
+                "description": "Port name to search for (for example rotterdam)."
+              },
+              {
+                "name": "fuzzy",
+                "value": "",
+                "type": "query",
+                "description": "Set to 1 for similar-name matching; 0 for exact matching."
+              }
+            ]
+          },
+          "docs": "Searches global maritime ports by name and returns port name, country ISO code and name, UN/LOCODE, port type, latitude/longitude, and administrative area levels. Returned port UUIDs and UN/LOCODEs can be used as center points for /vessel_inradius. Deducts 1 credit per port found."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

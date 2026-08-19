@@ -1,0 +1,677 @@
+{
+  "item": [
+    {
+      "id": "c9879889-655d-4326-9158-361a42ce1ec3",
+      "name": "Historical",
+      "description": {
+        "content": "Past AIS positions for vessels and zones.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "b7fd8134-b2af-4d18-a3f8-0426f7701cad",
+          "name": "Historical vessel traffic within a radius",
+          "request": {
+            "name": "Historical vessel traffic within a radius",
+            "description": {
+              "content": "Replays past vessel traffic for a zone. Cost is calculated as the number of days multiplied by the number of vessels per day (maximum 500 vessels per day).",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "inradius_history"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "lat",
+                  "value": "<number>",
+                  "description": "Latitude of the zone center point. Requires lon."
+                },
+                {
+                  "disabled": false,
+                  "key": "lon",
+                  "value": "<number>",
+                  "description": "Longitude of the zone center point. Requires lat."
+                },
+                {
+                  "disabled": false,
+                  "key": "port_uuid",
+                  "value": "<string>",
+                  "description": "Port UUID to use as the zone center point."
+                },
+                {
+                  "disabled": false,
+                  "key": "port_unlocode",
+                  "value": "<string>",
+                  "description": "Port UN/LOCODE to use as the zone center point."
+                },
+                {
+                  "disabled": false,
+                  "key": "radius",
+                  "value": "<number>",
+                  "description": "(Required) Search radius in nautical miles. Maximum 50 NM."
+                },
+                {
+                  "disabled": false,
+                  "key": "days",
+                  "value": "<integer>",
+                  "description": "Number of days back from today to return data for (for example days=5 returns the last 5 days)."
+                },
+                {
+                  "disabled": false,
+                  "key": "from",
+                  "value": "<date>",
+                  "description": "Start date for the data in YYYY-MM-DD format. A maximum of 31 days may be requested from this date."
+                },
+                {
+                  "disabled": false,
+                  "key": "to",
+                  "value": "<date>",
+                  "description": "End date for the data in YYYY-MM-DD format."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "ac985a9a-91fa-4286-ab2f-bb3f95d12b60",
+              "name": "Historical vessel traffic for the requested zone and period.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "inradius_history"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "lat",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "lon",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "port_uuid",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "port_unlocode",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "radius",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "days",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "from",
+                      "value": "<date>"
+                    },
+                    {
+                      "key": "to",
+                      "value": "<date>"
+                    },
+                    {
+                      "key": "api-key",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"vessels\": [\n      {\n        \"uuid\": \"string\",\n        \"name\": \"string\",\n        \"mmsi\": \"string\",\n        \"imo\": \"string\",\n        \"country_iso\": \"string\",\n        \"type\": \"string\",\n        \"type_specific\": \"string\",\n        \"lat\": 1503.3068238781411,\n        \"lon\": 2165.1342240309446,\n        \"speed\": 257.6969220339065,\n        \"course\": 7657.215800390406,\n        \"heading\": 8427.647321091556,\n        \"navigation_status\": \"string\",\n        \"destination\": \"string\",\n        \"last_position_epoch\": 6706,\n        \"last_position_UTC\": \"string\"\n      },\n      {\n        \"uuid\": \"string\",\n        \"name\": \"string\",\n        \"mmsi\": \"string\",\n        \"imo\": \"string\",\n        \"country_iso\": \"string\",\n        \"type\": \"string\",\n        \"type_specific\": \"string\",\n        \"lat\": 2650.7095992479835,\n        \"lon\": 2148.643766187581,\n        \"speed\": 7629.101263246011,\n        \"course\": 6702.821177994634,\n        \"heading\": 7650.142966159208,\n        \"navigation_status\": \"string\",\n        \"destination\": \"string\",\n        \"last_position_epoch\": 7109,\n        \"last_position_UTC\": \"string\"\n      }\n    ],\n    \"total\": 2525\n  },\n  \"meta\": {\n    \"duration\": 5189.236408473464,\n    \"endpoint\": \"string\",\n    \"success\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "66ac0c69-54e9-4966-8534-0cbc17bff4ee",
+              "name": "Missing or invalid api-key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "inradius_history"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "lat",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "lon",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "port_uuid",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "port_unlocode",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "radius",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "days",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "from",
+                      "value": "<date>"
+                    },
+                    {
+                      "key": "to",
+                      "value": "<date>"
+                    },
+                    {
+                      "key": "api-key",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"meta\": {\n    \"success\": true,\n    \"error\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d89f5a74-96ac-4e34-b9df-4cce87d6d5e5",
+              "name": "Rate limit exceeded. All plans share a limit of 600 API calls per minute.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "inradius_history"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "lat",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "lon",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "port_uuid",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "port_unlocode",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "radius",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "days",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "from",
+                      "value": "<date>"
+                    },
+                    {
+                      "key": "to",
+                      "value": "<date>"
+                    },
+                    {
+                      "key": "api-key",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"meta\": {\n    \"success\": true,\n    \"error\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "77ec2f67-48f0-4948-bb6f-599735e91ac1",
+          "name": "Historical vessel track",
+          "request": {
+            "name": "Historical vessel track",
+            "description": {
+              "content": "Returns past AIS positions for a vessel identified by uuid, mmsi, or imo, filtered by a days lookback or an explicit from/to date range in YYYY-MM-DD format. A maximum of 31 days may be requested from the from date. Each day of data per vessel deducts 1 credit.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "vessel_history"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "uuid",
+                  "value": "<string>",
+                  "description": "Datalastic vessel UUID."
+                },
+                {
+                  "disabled": false,
+                  "key": "mmsi",
+                  "value": "<string>",
+                  "description": "Vessel Maritime Mobile Service Identity (9-digit number)."
+                },
+                {
+                  "disabled": false,
+                  "key": "imo",
+                  "value": "<string>",
+                  "description": "Vessel International Maritime Organization number (7-digit)."
+                },
+                {
+                  "disabled": false,
+                  "key": "days",
+                  "value": "<integer>",
+                  "description": "Number of days back from today to return data for (for example days=5 returns the last 5 days)."
+                },
+                {
+                  "disabled": false,
+                  "key": "from",
+                  "value": "<date>",
+                  "description": "Start date for the data in YYYY-MM-DD format. A maximum of 31 days may be requested from this date."
+                },
+                {
+                  "disabled": false,
+                  "key": "to",
+                  "value": "<date>",
+                  "description": "End date for the data in YYYY-MM-DD format."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "a39ce46b-97b3-44f6-bf3a-d1cbd8c3de6f",
+              "name": "Historical track positions for the vessel.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "vessel_history"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "uuid",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "mmsi",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "imo",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "days",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "from",
+                      "value": "<date>"
+                    },
+                    {
+                      "key": "to",
+                      "value": "<date>"
+                    },
+                    {
+                      "key": "api-key",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"uuid\": \"string\",\n    \"name\": \"string\",\n    \"mmsi\": \"string\",\n    \"imo\": \"string\",\n    \"positions\": [\n      {\n        \"lat\": 7799.382857539265,\n        \"lon\": 1159.0162853274066,\n        \"speed\": 3872.295336590457,\n        \"course\": 6355.432602291679,\n        \"heading\": 1112.7156666651294,\n        \"destination\": \"string\",\n        \"last_position_epoch\": 3939,\n        \"last_position_UTC\": \"string\"\n      },\n      {\n        \"lat\": 9389.007660244315,\n        \"lon\": 6764.286197497588,\n        \"speed\": 3530.1120296571607,\n        \"course\": 9349.333382073173,\n        \"heading\": 3691.6471294103217,\n        \"destination\": \"string\",\n        \"last_position_epoch\": 8930,\n        \"last_position_UTC\": \"string\"\n      }\n    ]\n  },\n  \"meta\": {\n    \"duration\": 8835.134597523802,\n    \"endpoint\": \"string\",\n    \"success\": true\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "74501b64-7433-4870-a409-7ab893d07103",
+              "name": "Missing or invalid api-key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "vessel_history"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "uuid",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "mmsi",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "imo",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "days",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "from",
+                      "value": "<date>"
+                    },
+                    {
+                      "key": "to",
+                      "value": "<date>"
+                    },
+                    {
+                      "key": "api-key",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"meta\": {\n    \"success\": true,\n    \"error\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "894d43cd-8df5-48af-8e1a-45763b0d68bd",
+              "name": "No vessel or resource matched the supplied identifier.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "vessel_history"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "uuid",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "mmsi",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "imo",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "days",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "from",
+                      "value": "<date>"
+                    },
+                    {
+                      "key": "to",
+                      "value": "<date>"
+                    },
+                    {
+                      "key": "api-key",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"meta\": {\n    \"success\": true,\n    \"error\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9b14e3e0-6c2e-4cc3-a262-4a2aeb93df74",
+              "name": "Rate limit exceeded. All plans share a limit of 600 API calls per minute.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "vessel_history"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "uuid",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "mmsi",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "imo",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "days",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "from",
+                      "value": "<date>"
+                    },
+                    {
+                      "key": "to",
+                      "value": "<date>"
+                    },
+                    {
+                      "key": "api-key",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"meta\": {\n    \"success\": true,\n    \"error\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.datalastic.com/api/v0",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "api-key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "query"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "7602e7a8-fc40-4897-abef-726d0ec3ea30",
+    "name": "Datalastic Maritime Historical API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Datalastic provides real-time AIS vessel tracking, historical ship movements, vessel specifications, and global port data over REST. A database of 750,000+ ships is queryable by MMSI, IMO, or Datalastic UUID. All endpoints are served from https://api.datalastic.com/api/v0 and authenticate with an api-key query parameter tied to a subscription plan. Usage is metered in monthly database credits - most endpoints deduct one credit per vessel or port returned, and historical endpoints deduct one credit per vessel per day of data. All plans share a limit of 600 API calls per minute.\n\nContact Support:\n Name: Datalastic",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,421 @@
+{
+  "item": [
+    {
+      "id": "c8773c71-e77d-4d48-834c-3ad0f2613e9f",
+      "name": "Zone Traffic",
+      "description": {
+        "content": "Vessels within a radius of a point, port, or moving vessel.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "6f2ce63b-6411-45bf-8c9a-39fcccbe3562",
+          "name": "Vessels within a radius",
+          "request": {
+            "name": "Vessels within a radius",
+            "description": {
+              "content": "Returns all vessels within a radius (maximum 50 nautical miles) around either a static point - lat/lon coordinates, a port_uuid, or a port_unlocode - or a dynamic center defined by a moving vessel's uuid, mmsi, or imo. Results can be filtered by vessel type, specific subtype, exclusions, and navigational status. Deducts 1 credit per vessel found (maximum 500).",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "vessel_inradius"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "lat",
+                  "value": "<number>",
+                  "description": "Latitude of the static center point. Requires lon."
+                },
+                {
+                  "disabled": false,
+                  "key": "lon",
+                  "value": "<number>",
+                  "description": "Longitude of the static center point. Requires lat."
+                },
+                {
+                  "disabled": false,
+                  "key": "port_uuid",
+                  "value": "<string>",
+                  "description": "Port UUID to use as the center point."
+                },
+                {
+                  "disabled": false,
+                  "key": "port_unlocode",
+                  "value": "<string>",
+                  "description": "Port UN/LOCODE to use as the center point."
+                },
+                {
+                  "disabled": false,
+                  "key": "uuid",
+                  "value": "<string>",
+                  "description": "Vessel UUID to use as a dynamic (moving) center point."
+                },
+                {
+                  "disabled": false,
+                  "key": "mmsi",
+                  "value": "<string>",
+                  "description": "Vessel MMSI to use as a dynamic (moving) center point."
+                },
+                {
+                  "disabled": false,
+                  "key": "imo",
+                  "value": "<string>",
+                  "description": "Vessel IMO number to use as a dynamic (moving) center point."
+                },
+                {
+                  "disabled": false,
+                  "key": "radius",
+                  "value": "<number>",
+                  "description": "(Required) Search radius in nautical miles. Maximum 50 NM."
+                },
+                {
+                  "disabled": false,
+                  "key": "type",
+                  "value": "<string>",
+                  "description": "Vessel type filter (for example Cargo, Tanker, Fishing)."
+                },
+                {
+                  "disabled": false,
+                  "key": "type_specific",
+                  "value": "<string>",
+                  "description": "Vessel subtype filter (for example Crude Oil Tanker). Can be used on its own or combined with type. Use _empty_ to include or exclude vessels whose type is NULL."
+                },
+                {
+                  "disabled": false,
+                  "key": "exclude",
+                  "value": "<string>",
+                  "description": "Vessel types to exclude from the results."
+                },
+                {
+                  "disabled": false,
+                  "key": "nav_status",
+                  "value": "<integer>",
+                  "description": "Numeric navigational status code to filter by."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "fe96c25f-34cb-453d-bb41-113aa5470c4f",
+              "name": "Vessels currently inside the requested zone.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "vessel_inradius"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "lat",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "lon",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "port_uuid",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "port_unlocode",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "uuid",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "mmsi",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "imo",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "radius",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "type",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "type_specific",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "exclude",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "nav_status",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "api-key",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"vessels\": [\n      {\n        \"uuid\": \"string\",\n        \"name\": \"string\",\n        \"mmsi\": \"string\",\n        \"imo\": \"string\",\n        \"country_iso\": \"string\",\n        \"type\": \"string\",\n        \"type_specific\": \"string\",\n        \"lat\": 7097.0911290640315,\n        \"lon\": 3605.713509439968,\n        \"speed\": 3235.9959792546933,\n        \"course\": 8929.752188546441,\n        \"heading\": 7944.280283421638,\n        \"navigation_status\": \"string\",\n        \"destination\": \"string\",\n        \"last_position_epoch\": 1578,\n        \"last_position_UTC\": \"string\"\n      },\n      {\n        \"uuid\": \"string\",\n        \"name\": \"string\",\n        \"mmsi\": \"string\",\n        \"imo\": \"string\",\n        \"country_iso\": \"string\",\n        \"type\": \"string\",\n        \"type_specific\": \"string\",\n        \"lat\": 756.5755934164974,\n        \"lon\": 4165.782428339112,\n        \"speed\": 3480.539244346327,\n        \"course\": 2207.058123465935,\n        \"heading\": 3041.6198934740446,\n        \"navigation_status\": \"string\",\n        \"destination\": \"string\",\n        \"last_position_epoch\": 8103,\n        \"last_position_UTC\": \"string\"\n      }\n    ],\n    \"total\": 7371\n  },\n  \"meta\": {\n    \"duration\": 8988.086775215728,\n    \"endpoint\": \"string\",\n    \"success\": true\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c7e123d2-ae53-4fb2-8389-4f388bf79edb",
+              "name": "Missing or invalid api-key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "vessel_inradius"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "lat",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "lon",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "port_uuid",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "port_unlocode",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "uuid",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "mmsi",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "imo",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "radius",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "type",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "type_specific",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "exclude",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "nav_status",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "api-key",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"meta\": {\n    \"success\": false,\n    \"error\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "160d9c81-87df-4385-929b-4d885e441205",
+              "name": "Rate limit exceeded. All plans share a limit of 600 API calls per minute.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "vessel_inradius"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "lat",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "lon",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "port_uuid",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "port_unlocode",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "uuid",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "mmsi",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "imo",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "radius",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "type",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "type_specific",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "exclude",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "nav_status",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "api-key",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"meta\": {\n    \"success\": false,\n    \"error\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.datalastic.com/api/v0",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "api-key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "query"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "0634f598-aa96-4169-aabf-9209307222bb",
+    "name": "Datalastic Maritime Historical Zone Traffic API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Datalastic provides real-time AIS vessel tracking, historical ship movements, vessel specifications, and global port data over REST. A database of 750,000+ ships is queryable by MMSI, IMO, or Datalastic UUID. All endpoints are served from https://api.datalastic.com/api/v0 and authenticate with an api-key query parameter tied to a subscription plan. Usage is metered in monthly database credits - most endpoints deduct one credit per vessel or port returned, and historical endpoints deduct one credit per vessel per day of data. All plans share a limit of 600 API calls per minute.\n\nContact Support:\n Name: Datalastic",
+      "type": "text/plain"
+    }
+  }
+}

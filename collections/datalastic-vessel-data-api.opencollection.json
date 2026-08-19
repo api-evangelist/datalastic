@@ -1,0 +1,166 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Datalastic Maritime Historical Vessel Data API",
+    "version": "v0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "api-key",
+      "value": "{{api-key}}",
+      "placement": "query"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Vessel Data",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Ship specifications",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datalastic.com/api/v0/vessel_info",
+            "params": [
+              {
+                "name": "uuid",
+                "value": "",
+                "type": "query",
+                "description": "Datalastic vessel UUID."
+              },
+              {
+                "name": "mmsi",
+                "value": "",
+                "type": "query",
+                "description": "Vessel Maritime Mobile Service Identity (9-digit number)."
+              },
+              {
+                "name": "imo",
+                "value": "",
+                "type": "query",
+                "description": "Vessel International Maritime Organization number (7-digit)."
+              }
+            ]
+          },
+          "docs": "Returns static specifications for a single vessel identified by uuid, mmsi, or imo - MMSI, IMO, country name, call sign, ship type and subtype, gross tonnage, deadweight, TEU, length, breadth, year built, and home port. Deducts 1 credit per vessel."
+        },
+        {
+          "info": {
+            "name": "Vessel finder search",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datalastic.com/api/v0/vessel_find",
+            "params": [
+              {
+                "name": "name",
+                "value": "",
+                "type": "query",
+                "description": "Vessel name to search for."
+              },
+              {
+                "name": "fuzzy",
+                "value": "",
+                "type": "query",
+                "description": "Set to 1 for similar-name matching (Eric matches Erica); 0 for exact name matching."
+              },
+              {
+                "name": "type",
+                "value": "",
+                "type": "query",
+                "description": "Vessel type filter (for example Cargo, Tanker, Fishing)."
+              },
+              {
+                "name": "type_specific",
+                "value": "",
+                "type": "query",
+                "description": "Vessel subtype filter (for example Crude Oil Tanker). Can be used on its own or combined with type. Use _empty_ to include or exclude vessels whose type is NULL."
+              },
+              {
+                "name": "country_iso",
+                "value": "",
+                "type": "query",
+                "description": "Flag country of the vessels as a 2-letter ISO code."
+              },
+              {
+                "name": "gross_tonnage_min",
+                "value": "",
+                "type": "query",
+                "description": "Minimum gross tonnage."
+              },
+              {
+                "name": "gross_tonnage_max",
+                "value": "",
+                "type": "query",
+                "description": "Maximum gross tonnage."
+              },
+              {
+                "name": "deadweight_min",
+                "value": "",
+                "type": "query",
+                "description": "Minimum deadweight tonnage."
+              },
+              {
+                "name": "deadweight_max",
+                "value": "",
+                "type": "query",
+                "description": "Maximum deadweight tonnage."
+              },
+              {
+                "name": "length_min",
+                "value": "",
+                "type": "query",
+                "description": "Minimum vessel length in meters."
+              },
+              {
+                "name": "length_max",
+                "value": "",
+                "type": "query",
+                "description": "Maximum vessel length in meters."
+              },
+              {
+                "name": "breadth_min",
+                "value": "",
+                "type": "query",
+                "description": "Minimum vessel breadth in meters."
+              },
+              {
+                "name": "breadth_max",
+                "value": "",
+                "type": "query",
+                "description": "Maximum vessel breadth in meters."
+              },
+              {
+                "name": "year_built_min",
+                "value": "",
+                "type": "query",
+                "description": "Earliest year built."
+              },
+              {
+                "name": "year_built_max",
+                "value": "",
+                "type": "query",
+                "description": "Latest year built."
+              },
+              {
+                "name": "next",
+                "value": "",
+                "type": "query",
+                "description": "Pagination cursor for retrieving the next page of results."
+              }
+            ]
+          },
+          "docs": "Searches the 750,000+ ship database by name (exact or fuzzy match), type, specific subtype, flag country, gross tonnage, deadweight, dimensions, and year built. Deducts 1 credit per vessel found."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

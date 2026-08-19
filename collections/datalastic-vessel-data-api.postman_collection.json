@@ -1,0 +1,755 @@
+{
+  "item": [
+    {
+      "id": "15213745-92c9-441a-a92c-fa924bc76afd",
+      "name": "Vessel Data",
+      "description": {
+        "content": "Static ship specifications and vessel search.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "ed73ae04-c775-43d8-be11-efa5aca659cc",
+          "name": "Ship specifications",
+          "request": {
+            "name": "Ship specifications",
+            "description": {
+              "content": "Returns static specifications for a single vessel identified by uuid, mmsi, or imo - MMSI, IMO, country name, call sign, ship type and subtype, gross tonnage, deadweight, TEU, length, breadth, year built, and home port. Deducts 1 credit per vessel.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "vessel_info"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "uuid",
+                  "value": "<string>",
+                  "description": "Datalastic vessel UUID."
+                },
+                {
+                  "disabled": false,
+                  "key": "mmsi",
+                  "value": "<string>",
+                  "description": "Vessel Maritime Mobile Service Identity (9-digit number)."
+                },
+                {
+                  "disabled": false,
+                  "key": "imo",
+                  "value": "<string>",
+                  "description": "Vessel International Maritime Organization number (7-digit)."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "c85ecac2-b48e-48cb-8b75-07e0e527e711",
+              "name": "Static vessel specification data.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "vessel_info"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "uuid",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "mmsi",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "imo",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "api-key",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"uuid\": \"string\",\n    \"name\": \"string\",\n    \"mmsi\": \"string\",\n    \"imo\": \"string\",\n    \"country_name\": \"string\",\n    \"callsign\": \"string\",\n    \"type\": \"string\",\n    \"type_specific\": \"string\",\n    \"gross_tonnage\": 7468.616930658798,\n    \"deadweight\": 3963.659275476625,\n    \"teu\": 1975.5972401667686,\n    \"length\": 2646.7079210421853,\n    \"breadth\": 5608.368468886689,\n    \"year_built\": 8500,\n    \"home_port\": \"string\"\n  },\n  \"meta\": {\n    \"duration\": 3558.810528252634,\n    \"endpoint\": \"string\",\n    \"success\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2c0750ed-eddf-4326-ab35-461f05f92e4f",
+              "name": "Missing or invalid api-key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "vessel_info"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "uuid",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "mmsi",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "imo",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "api-key",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"meta\": {\n    \"success\": false,\n    \"error\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ec80c9d3-f2af-45f3-8342-590b79758305",
+              "name": "No vessel or resource matched the supplied identifier.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "vessel_info"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "uuid",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "mmsi",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "imo",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "api-key",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"meta\": {\n    \"success\": false,\n    \"error\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d278ffed-d40e-4ba7-914a-69d7f32aadd3",
+              "name": "Rate limit exceeded. All plans share a limit of 600 API calls per minute.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "vessel_info"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "uuid",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "mmsi",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "imo",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "api-key",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"meta\": {\n    \"success\": false,\n    \"error\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "9d2743e2-2324-450b-ad5c-ca7d491f9709",
+          "name": "Vessel finder search",
+          "request": {
+            "name": "Vessel finder search",
+            "description": {
+              "content": "Searches the 750,000+ ship database by name (exact or fuzzy match), type, specific subtype, flag country, gross tonnage, deadweight, dimensions, and year built. Deducts 1 credit per vessel found.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "vessel_find"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "name",
+                  "value": "<string>",
+                  "description": "Vessel name to search for."
+                },
+                {
+                  "disabled": false,
+                  "key": "fuzzy",
+                  "value": "<integer>",
+                  "description": "Set to 1 for similar-name matching (Eric matches Erica); 0 for exact name matching."
+                },
+                {
+                  "disabled": false,
+                  "key": "type",
+                  "value": "<string>",
+                  "description": "Vessel type filter (for example Cargo, Tanker, Fishing)."
+                },
+                {
+                  "disabled": false,
+                  "key": "type_specific",
+                  "value": "<string>",
+                  "description": "Vessel subtype filter (for example Crude Oil Tanker). Can be used on its own or combined with type. Use _empty_ to include or exclude vessels whose type is NULL."
+                },
+                {
+                  "disabled": false,
+                  "key": "country_iso",
+                  "value": "<string>",
+                  "description": "Flag country of the vessels as a 2-letter ISO code."
+                },
+                {
+                  "disabled": false,
+                  "key": "gross_tonnage_min",
+                  "value": "<number>",
+                  "description": "Minimum gross tonnage."
+                },
+                {
+                  "disabled": false,
+                  "key": "gross_tonnage_max",
+                  "value": "<number>",
+                  "description": "Maximum gross tonnage."
+                },
+                {
+                  "disabled": false,
+                  "key": "deadweight_min",
+                  "value": "<number>",
+                  "description": "Minimum deadweight tonnage."
+                },
+                {
+                  "disabled": false,
+                  "key": "deadweight_max",
+                  "value": "<number>",
+                  "description": "Maximum deadweight tonnage."
+                },
+                {
+                  "disabled": false,
+                  "key": "length_min",
+                  "value": "<number>",
+                  "description": "Minimum vessel length in meters."
+                },
+                {
+                  "disabled": false,
+                  "key": "length_max",
+                  "value": "<number>",
+                  "description": "Maximum vessel length in meters."
+                },
+                {
+                  "disabled": false,
+                  "key": "breadth_min",
+                  "value": "<number>",
+                  "description": "Minimum vessel breadth in meters."
+                },
+                {
+                  "disabled": false,
+                  "key": "breadth_max",
+                  "value": "<number>",
+                  "description": "Maximum vessel breadth in meters."
+                },
+                {
+                  "disabled": false,
+                  "key": "year_built_min",
+                  "value": "<integer>",
+                  "description": "Earliest year built."
+                },
+                {
+                  "disabled": false,
+                  "key": "year_built_max",
+                  "value": "<integer>",
+                  "description": "Latest year built."
+                },
+                {
+                  "disabled": false,
+                  "key": "next",
+                  "value": "<string>",
+                  "description": "Pagination cursor for retrieving the next page of results."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "8e484477-c0f8-4255-9f03-0b934469fbe6",
+              "name": "Vessels matching the search criteria.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "vessel_find"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "name",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "fuzzy",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "type",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "type_specific",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "country_iso",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "gross_tonnage_min",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "gross_tonnage_max",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "deadweight_min",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "deadweight_max",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "length_min",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "length_max",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "breadth_min",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "breadth_max",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "year_built_min",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "year_built_max",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "next",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "api-key",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"uuid\": \"string\",\n      \"name\": \"string\",\n      \"mmsi\": \"string\",\n      \"imo\": \"string\",\n      \"country_name\": \"string\",\n      \"callsign\": \"string\",\n      \"type\": \"string\",\n      \"type_specific\": \"string\",\n      \"gross_tonnage\": 6706.131822115251,\n      \"deadweight\": 6952.150745565734,\n      \"teu\": 3040.020163061652,\n      \"length\": 7328.460429321501,\n      \"breadth\": 7377.1248792121905,\n      \"year_built\": 1619,\n      \"home_port\": \"string\"\n    },\n    {\n      \"uuid\": \"string\",\n      \"name\": \"string\",\n      \"mmsi\": \"string\",\n      \"imo\": \"string\",\n      \"country_name\": \"string\",\n      \"callsign\": \"string\",\n      \"type\": \"string\",\n      \"type_specific\": \"string\",\n      \"gross_tonnage\": 900.7774103974797,\n      \"deadweight\": 4729.310340064314,\n      \"teu\": 4624.866282372208,\n      \"length\": 7819.378861207845,\n      \"breadth\": 9137.84858444876,\n      \"year_built\": 4190,\n      \"home_port\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"duration\": 2895.18467889465,\n    \"endpoint\": \"string\",\n    \"success\": true\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "4d17ed90-4978-4df1-b2da-bc8517708106",
+              "name": "Missing or invalid api-key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "vessel_find"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "name",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "fuzzy",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "type",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "type_specific",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "country_iso",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "gross_tonnage_min",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "gross_tonnage_max",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "deadweight_min",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "deadweight_max",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "length_min",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "length_max",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "breadth_min",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "breadth_max",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "year_built_min",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "year_built_max",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "next",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "api-key",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"meta\": {\n    \"success\": false,\n    \"error\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "be6d9607-1414-41c9-aac0-c474b355b414",
+              "name": "Rate limit exceeded. All plans share a limit of 600 API calls per minute.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "vessel_find"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "name",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "fuzzy",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "type",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "type_specific",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "country_iso",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "gross_tonnage_min",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "gross_tonnage_max",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "deadweight_min",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "deadweight_max",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "length_min",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "length_max",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "breadth_min",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "breadth_max",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "year_built_min",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "year_built_max",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "next",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "api-key",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"meta\": {\n    \"success\": false,\n    \"error\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.datalastic.com/api/v0",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "api-key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "query"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "2ae545a5-02c0-48e5-bf87-de8520b849fe",
+    "name": "Datalastic Maritime Historical Vessel Data API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Datalastic provides real-time AIS vessel tracking, historical ship movements, vessel specifications, and global port data over REST. A database of 750,000+ ships is queryable by MMSI, IMO, or Datalastic UUID. All endpoints are served from https://api.datalastic.com/api/v0 and authenticate with an api-key query parameter tied to a subscription plan. Usage is metered in monthly database credits - most endpoints deduct one credit per vessel or port returned, and historical endpoints deduct one credit per vessel per day of data. All plans share a limit of 600 API calls per minute.\n\nContact Support:\n Name: Datalastic",
+      "type": "text/plain"
+    }
+  }
+}

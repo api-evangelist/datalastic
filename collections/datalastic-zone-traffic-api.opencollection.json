@@ -1,0 +1,111 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Datalastic Maritime Historical Zone Traffic API",
+    "version": "v0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "api-key",
+      "value": "{{api-key}}",
+      "placement": "query"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Zone Traffic",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Vessels within a radius",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datalastic.com/api/v0/vessel_inradius",
+            "params": [
+              {
+                "name": "lat",
+                "value": "",
+                "type": "query",
+                "description": "Latitude of the static center point. Requires lon."
+              },
+              {
+                "name": "lon",
+                "value": "",
+                "type": "query",
+                "description": "Longitude of the static center point. Requires lat."
+              },
+              {
+                "name": "port_uuid",
+                "value": "",
+                "type": "query",
+                "description": "Port UUID to use as the center point."
+              },
+              {
+                "name": "port_unlocode",
+                "value": "",
+                "type": "query",
+                "description": "Port UN/LOCODE to use as the center point."
+              },
+              {
+                "name": "uuid",
+                "value": "",
+                "type": "query",
+                "description": "Vessel UUID to use as a dynamic (moving) center point."
+              },
+              {
+                "name": "mmsi",
+                "value": "",
+                "type": "query",
+                "description": "Vessel MMSI to use as a dynamic (moving) center point."
+              },
+              {
+                "name": "imo",
+                "value": "",
+                "type": "query",
+                "description": "Vessel IMO number to use as a dynamic (moving) center point."
+              },
+              {
+                "name": "radius",
+                "value": "",
+                "type": "query",
+                "description": "Search radius in nautical miles. Maximum 50 NM."
+              },
+              {
+                "name": "type",
+                "value": "",
+                "type": "query",
+                "description": "Vessel type filter (for example Cargo, Tanker, Fishing)."
+              },
+              {
+                "name": "type_specific",
+                "value": "",
+                "type": "query",
+                "description": "Vessel subtype filter (for example Crude Oil Tanker). Can be used on its own or combined with type. Use _empty_ to include or exclude vessels whose type is NULL."
+              },
+              {
+                "name": "exclude",
+                "value": "",
+                "type": "query",
+                "description": "Vessel types to exclude from the results."
+              },
+              {
+                "name": "nav_status",
+                "value": "",
+                "type": "query",
+                "description": "Numeric navigational status code to filter by."
+              }
+            ]
+          },
+          "docs": "Returns all vessels within a radius (maximum 50 nautical miles) around either a static point - lat/lon coordinates, a port_uuid, or a port_unlocode - or a dynamic center defined by a moving vessel's uuid, mmsi, or imo. Results can be filtered by vessel type, specific subtype, exclusions, and navigational status. Deducts 1 credit per vessel found (maximum 500)."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

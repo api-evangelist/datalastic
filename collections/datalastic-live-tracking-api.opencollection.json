@@ -1,0 +1,119 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Datalastic Maritime Historical Live Tracking API",
+    "version": "v0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "api-key",
+      "value": "{{api-key}}",
+      "placement": "query"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Live Tracking",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Basic live ship tracking",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datalastic.com/api/v0/vessel",
+            "params": [
+              {
+                "name": "uuid",
+                "value": "",
+                "type": "query",
+                "description": "Datalastic vessel UUID."
+              },
+              {
+                "name": "mmsi",
+                "value": "",
+                "type": "query",
+                "description": "Vessel Maritime Mobile Service Identity (9-digit number)."
+              },
+              {
+                "name": "imo",
+                "value": "",
+                "type": "query",
+                "description": "Vessel International Maritime Organization number (7-digit)."
+              }
+            ]
+          },
+          "docs": "Returns the latest real-time AIS data for a single vessel identified by uuid, mmsi, or imo - name, identifiers, country code, type and subtype, latitude, longitude, speed, course, heading, navigational status, destination, and position timestamp. Average response time is 0.005 seconds. Deducts 1 credit per request."
+        },
+        {
+          "info": {
+            "name": "Pro live ship tracking with ETA",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datalastic.com/api/v0/vessel_pro",
+            "params": [
+              {
+                "name": "uuid",
+                "value": "",
+                "type": "query",
+                "description": "Datalastic vessel UUID."
+              },
+              {
+                "name": "mmsi",
+                "value": "",
+                "type": "query",
+                "description": "Vessel Maritime Mobile Service Identity (9-digit number)."
+              },
+              {
+                "name": "imo",
+                "value": "",
+                "type": "query",
+                "description": "Vessel International Maritime Organization number (7-digit)."
+              }
+            ]
+          },
+          "docs": "Returns everything the basic /vessel endpoint returns plus estimated time of arrival (ETA), actual time of departure (ATD), current draft, and UN/LOCODE destination and departure ports. Average response time is 0.9 seconds. Deducts 1 credit per request."
+        },
+        {
+          "info": {
+            "name": "Bulk live ship tracking",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datalastic.com/api/v0/vessel_bulk",
+            "params": [
+              {
+                "name": "uuid",
+                "value": "",
+                "type": "query",
+                "description": "Datalastic vessel UUID. Repeatable, up to 100 vessels per call."
+              },
+              {
+                "name": "mmsi",
+                "value": "",
+                "type": "query",
+                "description": "Vessel MMSI (9-digit). Repeatable, up to 100 vessels per call."
+              },
+              {
+                "name": "imo",
+                "value": "",
+                "type": "query",
+                "description": "Vessel IMO number (7-digit). Repeatable, up to 100 vessels per call."
+              }
+            ]
+          },
+          "docs": "Tracks up to 100 vessels in a single call. Repeat the uuid, mmsi, and/or imo parameters for each vessel to track. Deducts 1 credit per successfully returned vessel."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

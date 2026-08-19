@@ -1,0 +1,136 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Datalastic Maritime Historical API",
+    "version": "v0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "api-key",
+      "value": "{{api-key}}",
+      "placement": "query"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Historical",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Historical vessel traffic within a radius",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datalastic.com/api/v0/inradius_history",
+            "params": [
+              {
+                "name": "lat",
+                "value": "",
+                "type": "query",
+                "description": "Latitude of the zone center point. Requires lon."
+              },
+              {
+                "name": "lon",
+                "value": "",
+                "type": "query",
+                "description": "Longitude of the zone center point. Requires lat."
+              },
+              {
+                "name": "port_uuid",
+                "value": "",
+                "type": "query",
+                "description": "Port UUID to use as the zone center point."
+              },
+              {
+                "name": "port_unlocode",
+                "value": "",
+                "type": "query",
+                "description": "Port UN/LOCODE to use as the zone center point."
+              },
+              {
+                "name": "radius",
+                "value": "",
+                "type": "query",
+                "description": "Search radius in nautical miles. Maximum 50 NM."
+              },
+              {
+                "name": "days",
+                "value": "",
+                "type": "query",
+                "description": "Number of days back from today to return data for (for example days=5 returns the last 5 days)."
+              },
+              {
+                "name": "from",
+                "value": "",
+                "type": "query",
+                "description": "Start date for the data in YYYY-MM-DD format. A maximum of 31 days may be requested from this date."
+              },
+              {
+                "name": "to",
+                "value": "",
+                "type": "query",
+                "description": "End date for the data in YYYY-MM-DD format."
+              }
+            ]
+          },
+          "docs": "Replays past vessel traffic for a zone. Cost is calculated as the number of days multiplied by the number of vessels per day (maximum 500 vessels per day)."
+        },
+        {
+          "info": {
+            "name": "Historical vessel track",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datalastic.com/api/v0/vessel_history",
+            "params": [
+              {
+                "name": "uuid",
+                "value": "",
+                "type": "query",
+                "description": "Datalastic vessel UUID."
+              },
+              {
+                "name": "mmsi",
+                "value": "",
+                "type": "query",
+                "description": "Vessel Maritime Mobile Service Identity (9-digit number)."
+              },
+              {
+                "name": "imo",
+                "value": "",
+                "type": "query",
+                "description": "Vessel International Maritime Organization number (7-digit)."
+              },
+              {
+                "name": "days",
+                "value": "",
+                "type": "query",
+                "description": "Number of days back from today to return data for (for example days=5 returns the last 5 days)."
+              },
+              {
+                "name": "from",
+                "value": "",
+                "type": "query",
+                "description": "Start date for the data in YYYY-MM-DD format. A maximum of 31 days may be requested from this date."
+              },
+              {
+                "name": "to",
+                "value": "",
+                "type": "query",
+                "description": "End date for the data in YYYY-MM-DD format."
+              }
+            ]
+          },
+          "docs": "Returns past AIS positions for a vessel identified by uuid, mmsi, or imo, filtered by a days lookback or an explicit from/to date range in YYYY-MM-DD format. A maximum of 31 days may be requested from the from date. Each day of data per vessel deducts 1 credit."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
