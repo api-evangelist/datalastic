@@ -10,6 +10,18 @@ description: Datalastic is a maritime data API providing real-time AIS vessel
   days of historical track per request, vessel and port finder search, and
   asynchronous bulk reports. Access is subscription-based with a monthly credit
   model and api-key authentication.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: freemium
   onboarding: self-serve
