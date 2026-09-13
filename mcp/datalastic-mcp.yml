@@ -1,0 +1,69 @@
+generated: '2026-09-11'
+method: probed
+source: https://mcp.datalastic.com/mcp
+status: published
+server:
+  name: datalastic
+  transport: http
+  url: https://mcp.datalastic.com/mcp
+deployment:
+  mode: remote
+  endpoint: https://mcp.datalastic.com/mcp
+  verified: probed
+  probe: live
+  checked: '2026-09-11'
+  source: docs-check 2026-09-11 (endpoint found in the provider's own documentation, then probed)
+tools_count: 25
+tools:
+- name: estimated_vessel_position
+  description: ''
+- name: find_ports
+  description: ''
+- name: find_vessels
+  description: ''
+- name: get_port
+  description: ''
+- name: get_vessel
+  description: ''
+- name: get_vessel_history
+  description: ''
+- name: get_vessel_info
+  description: ''
+- name: get_vessel_pro
+  description: ''
+- name: get_vessels_bulk
+  description: ''
+- name: get_vessels_in_radius
+  description: ''
+- name: get_weather
+  description: ''
+- name: intel_casualties
+  description: ''
+- name: intel_class
+  description: ''
+- name: intel_companies
+  description: ''
+- name: intel_drydock
+  description: ''
+- name: intel_engine
+  description: ''
+- name: intel_info
+  description: ''
+- name: intel_inspections
+  description: ''
+- name: intel_ownership
+  description: ''
+- name: intel_report_request
+  description: ''
+- name: intel_spd
+  description: ''
+- name: report_list
+  description: ''
+- name: report_request
+  description: ''
+- name: report_status
+  description: ''
+- name: sea_route
+  description: ''
+tools_source: live tools/list via initialize handshake, 2026-09-11 (signals/audit_mcp_authorship.py --probe)
+authorship: provider
