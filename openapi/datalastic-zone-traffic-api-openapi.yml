@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
-  title: Datalastic Maritime Historical Zone Traffic API
-  description: Datalastic provides real-time AIS vessel tracking, historical ship movements, vessel specifications, and global port data over REST. A database of 750,000+ ships is queryable by MMSI, IMO, or Datalastic UUID. All endpoints are served from https://api.datalastic.com/api/v0 and authenticate with an api-key query parameter tied to a subscription plan. Usage is metered in monthly database credits - most endpoints deduct one credit per vessel or port returned, and historical endpoints deduct one credit per vessel per day of data. All plans share a limit of 600 API calls per minute.
+  title: Datalastic Maritime Zone Traffic API
+  description: Datalastic provides real-time AIS vessel tracking, historical ship movements, vessel specifications, and global port data over REST.
   version: v0
   contact:
     name: Datalastic
@@ -98,21 +98,6 @@ paths:
         '429':
           $ref: '#/components/responses/TooManyRequests'
 components:
-  parameters:
-    VesselTypeSpecific:
-      name: type_specific
-      in: query
-      description: Vessel subtype filter (for example Crude Oil Tanker). Can be used on its own or combined with type. Use _empty_ to include or exclude vessels whose type is NULL.
-      required: false
-      schema:
-        type: string
-    VesselType:
-      name: type
-      in: query
-      description: Vessel type filter (for example Cargo, Tanker, Fishing).
-      required: false
-      schema:
-        type: string
   schemas:
     Meta:
       type: object
@@ -179,17 +164,6 @@ components:
         last_position_UTC:
           type: string
           description: UTC timestamp of the last position report.
-    Error:
-      type: object
-      properties:
-        meta:
-          type: object
-          properties:
-            success:
-              type: boolean
-            error:
-              type: string
-              description: Error message, for example Too Many Requests.
     VesselListResponse:
       type: object
       properties:
@@ -205,6 +179,32 @@ components:
               description: Number of vessels returned.
         meta:
           $ref: '#/components/schemas/Meta'
+    Error:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            success:
+              type: boolean
+            error:
+              type: string
+              description: Error message, for example Too Many Requests.
+  parameters:
+    VesselTypeSpecific:
+      name: type_specific
+      in: query
+      description: Vessel subtype filter (for example Crude Oil Tanker). Can be used on its own or combined with type. Use _empty_ to include or exclude vessels whose type is NULL.
+      required: false
+      schema:
+        type: string
+    VesselType:
+      name: type
+      in: query
+      description: Vessel type filter (for example Cargo, Tanker, Fishing).
+      required: false
+      schema:
+        type: string
   responses:
     Unauthorized:
       description: Missing or invalid api-key.

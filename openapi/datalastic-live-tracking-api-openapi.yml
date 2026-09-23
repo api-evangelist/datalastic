@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
-  title: Datalastic Maritime Historical Live Tracking API
-  description: Datalastic provides real-time AIS vessel tracking, historical ship movements, vessel specifications, and global port data over REST. A database of 750,000+ ships is queryable by MMSI, IMO, or Datalastic UUID. All endpoints are served from https://api.datalastic.com/api/v0 and authenticate with an api-key query parameter tied to a subscription plan. Usage is metered in monthly database credits - most endpoints deduct one credit per vessel or port returned, and historical endpoints deduct one credit per vessel per day of data. All plans share a limit of 600 API calls per minute.
+  title: Datalastic Maritime Live Tracking API
+  description: Datalastic provides real-time AIS vessel tracking, historical ship movements, vessel specifications, and global port data over REST.
   version: v0
   contact:
     name: Datalastic
@@ -111,13 +111,6 @@ paths:
           $ref: '#/components/responses/TooManyRequests'
 components:
   schemas:
-    VesselProResponse:
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/VesselProPosition'
-        meta:
-          $ref: '#/components/schemas/Meta'
     Meta:
       type: object
       description: Response metadata.
@@ -131,34 +124,6 @@ components:
         success:
           type: boolean
           description: Whether the request succeeded.
-    VesselPositionResponse:
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/VesselPosition'
-        meta:
-          $ref: '#/components/schemas/Meta'
-    VesselProPosition:
-      allOf:
-      - $ref: '#/components/schemas/VesselPosition'
-      - type: object
-        description: Extended voyage fields returned by /vessel_pro.
-        properties:
-          eta_UTC:
-            type: string
-            description: Estimated time of arrival (UTC).
-          atd_UTC:
-            type: string
-            description: Actual time of departure (UTC).
-          current_draught:
-            type: number
-            description: Current draft in meters.
-          dest_port_unlocode:
-            type: string
-            description: UN/LOCODE of the destination port.
-          dep_port_unlocode:
-            type: string
-            description: UN/LOCODE of the departure port.
     VesselPosition:
       type: object
       description: Real-time AIS position data for a vessel.
@@ -211,17 +176,41 @@ components:
         last_position_UTC:
           type: string
           description: UTC timestamp of the last position report.
-    Error:
+    VesselPositionResponse:
       type: object
       properties:
+        data:
+          $ref: '#/components/schemas/VesselPosition'
         meta:
-          type: object
-          properties:
-            success:
-              type: boolean
-            error:
-              type: string
-              description: Error message, for example Too Many Requests.
+          $ref: '#/components/schemas/Meta'
+    VesselProPosition:
+      allOf:
+      - $ref: '#/components/schemas/VesselPosition'
+      - type: object
+        description: Extended voyage fields returned by /vessel_pro.
+        properties:
+          eta_UTC:
+            type: string
+            description: Estimated time of arrival (UTC).
+          atd_UTC:
+            type: string
+            description: Actual time of departure (UTC).
+          current_draught:
+            type: number
+            description: Current draft in meters.
+          dest_port_unlocode:
+            type: string
+            description: UN/LOCODE of the destination port.
+          dep_port_unlocode:
+            type: string
+            description: UN/LOCODE of the departure port.
+    VesselProResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/VesselProPosition'
+        meta:
+          $ref: '#/components/schemas/Meta'
     VesselListResponse:
       type: object
       properties:
@@ -237,26 +226,25 @@ components:
               description: Number of vessels returned.
         meta:
           $ref: '#/components/schemas/Meta'
-  responses:
-    TooManyRequests:
-      description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid api-key.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: No vessel or resource matched the supplied identifier.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+    Error:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            success:
+              type: boolean
+            error:
+              type: string
+              description: Error message, for example Too Many Requests.
   parameters:
+    Uuid:
+      name: uuid
+      in: query
+      description: Datalastic vessel UUID.
+      required: false
+      schema:
+        type: string
     Mmsi:
       name: mmsi
       in: query
@@ -271,13 +259,25 @@ components:
       required: false
       schema:
         type: string
-    Uuid:
-      name: uuid
-      in: query
-      description: Datalastic vessel UUID.
-      required: false
-      schema:
-        type: string
+  responses:
+    NotFound:
+      description: No vessel or resource matched the supplied identifier.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid api-key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    TooManyRequests:
+      description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     apiKey:
       type: apiKey

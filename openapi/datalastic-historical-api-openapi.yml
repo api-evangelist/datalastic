@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   title: Datalastic Maritime Historical API
-  description: Datalastic provides real-time AIS vessel tracking, historical ship movements, vessel specifications, and global port data over REST. A database of 750,000+ ships is queryable by MMSI, IMO, or Datalastic UUID. All endpoints are served from https://api.datalastic.com/api/v0 and authenticate with an api-key query parameter tied to a subscription plan. Usage is metered in monthly database credits - most endpoints deduct one credit per vessel or port returned, and historical endpoints deduct one credit per vessel per day of data. All plans share a limit of 600 API calls per minute.
+  description: Datalastic provides real-time AIS vessel tracking, historical ship movements, vessel specifications, and global port data over REST.
   version: v0
   contact:
     name: Datalastic
@@ -110,48 +110,6 @@ components:
         success:
           type: boolean
           description: Whether the request succeeded.
-    VesselHistoryResponse:
-      type: object
-      properties:
-        data:
-          type: object
-          properties:
-            uuid:
-              type: string
-              description: Datalastic vessel UUID.
-            name:
-              type: string
-              description: Vessel name.
-            mmsi:
-              type: string
-              description: Maritime Mobile Service Identity.
-            imo:
-              type: string
-              description: International Maritime Organization number.
-            positions:
-              type: array
-              description: Historical track positions.
-              items:
-                type: object
-                properties:
-                  lat:
-                    type: number
-                  lon:
-                    type: number
-                  speed:
-                    type: number
-                  course:
-                    type: number
-                  heading:
-                    type: number
-                  destination:
-                    type: string
-                  last_position_epoch:
-                    type: integer
-                  last_position_UTC:
-                    type: string
-        meta:
-          $ref: '#/components/schemas/Meta'
     VesselPosition:
       type: object
       description: Real-time AIS position data for a vessel.
@@ -204,17 +162,6 @@ components:
         last_position_UTC:
           type: string
           description: UTC timestamp of the last position report.
-    Error:
-      type: object
-      properties:
-        meta:
-          type: object
-          properties:
-            success:
-              type: boolean
-            error:
-              type: string
-              description: Error message, for example Too Many Requests.
     VesselListResponse:
       type: object
       properties:
@@ -230,26 +177,67 @@ components:
               description: Number of vessels returned.
         meta:
           $ref: '#/components/schemas/Meta'
-  responses:
-    TooManyRequests:
-      description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid api-key.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: No vessel or resource matched the supplied identifier.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+    VesselHistoryResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            uuid:
+              type: string
+              description: Datalastic vessel UUID.
+            name:
+              type: string
+              description: Vessel name.
+            mmsi:
+              type: string
+              description: Maritime Mobile Service Identity.
+            imo:
+              type: string
+              description: International Maritime Organization number.
+            positions:
+              type: array
+              description: Historical track positions.
+              items:
+                type: object
+                properties:
+                  lat:
+                    type: number
+                  lon:
+                    type: number
+                  speed:
+                    type: number
+                  course:
+                    type: number
+                  heading:
+                    type: number
+                  destination:
+                    type: string
+                  last_position_epoch:
+                    type: integer
+                  last_position_UTC:
+                    type: string
+        meta:
+          $ref: '#/components/schemas/Meta'
+    Error:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            success:
+              type: boolean
+            error:
+              type: string
+              description: Error message, for example Too Many Requests.
   parameters:
+    Uuid:
+      name: uuid
+      in: query
+      description: Datalastic vessel UUID.
+      required: false
+      schema:
+        type: string
     Mmsi:
       name: mmsi
       in: query
@@ -265,13 +253,6 @@ components:
       schema:
         type: string
         format: date
-    Days:
-      name: days
-      in: query
-      description: Number of days back from today to return data for (for example days=5 returns the last 5 days).
-      required: false
-      schema:
-        type: integer
     Imo:
       name: imo
       in: query
@@ -287,13 +268,32 @@ components:
       schema:
         type: string
         format: date
-    Uuid:
-      name: uuid
+    Days:
+      name: days
       in: query
-      description: Datalastic vessel UUID.
+      description: Number of days back from today to return data for (for example days=5 returns the last 5 days).
       required: false
       schema:
-        type: string
+        type: integer
+  responses:
+    NotFound:
+      description: No vessel or resource matched the supplied identifier.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid api-key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    TooManyRequests:
+      description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     apiKey:
       type: apiKey
