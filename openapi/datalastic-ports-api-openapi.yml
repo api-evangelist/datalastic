@@ -50,7 +50,42 @@ paths:
         '429':
           $ref: '#/components/responses/TooManyRequests'
 components:
+  responses:
+    TooManyRequests:
+      description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid api-key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
+    Meta:
+      type: object
+      description: Response metadata.
+      properties:
+        duration:
+          type: number
+          description: Server processing time in seconds.
+        endpoint:
+          type: string
+          description: The endpoint that served the request.
+        success:
+          type: boolean
+          description: Whether the request succeeded.
+    PortFindResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Port'
+        meta:
+          $ref: '#/components/schemas/Meta'
     Port:
       type: object
       description: Maritime port record.
@@ -85,28 +120,6 @@ components:
         area_level_2:
           type: string
           description: Second administrative area level.
-    Meta:
-      type: object
-      description: Response metadata.
-      properties:
-        duration:
-          type: number
-          description: Server processing time in seconds.
-        endpoint:
-          type: string
-          description: The endpoint that served the request.
-        success:
-          type: boolean
-          description: Whether the request succeeded.
-    PortFindResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/Port'
-        meta:
-          $ref: '#/components/schemas/Meta'
     Error:
       type: object
       properties:
@@ -118,19 +131,6 @@ components:
             error:
               type: string
               description: Error message, for example Too Many Requests.
-  responses:
-    Unauthorized:
-      description: Missing or invalid api-key.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    TooManyRequests:
-      description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   securitySchemes:
     apiKey:
       type: apiKey

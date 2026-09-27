@@ -148,7 +148,75 @@ paths:
         '429':
           $ref: '#/components/responses/TooManyRequests'
 components:
+  parameters:
+    VesselType:
+      name: type
+      in: query
+      description: Vessel type filter (for example Cargo, Tanker, Fishing).
+      required: false
+      schema:
+        type: string
+    Uuid:
+      name: uuid
+      in: query
+      description: Datalastic vessel UUID.
+      required: false
+      schema:
+        type: string
+    VesselTypeSpecific:
+      name: type_specific
+      in: query
+      description: Vessel subtype filter (for example Crude Oil Tanker). Can be used on its own or combined with type. Use _empty_ to include or exclude vessels whose type is NULL.
+      required: false
+      schema:
+        type: string
+    Mmsi:
+      name: mmsi
+      in: query
+      description: Vessel Maritime Mobile Service Identity (9-digit number).
+      required: false
+      schema:
+        type: string
+    Imo:
+      name: imo
+      in: query
+      description: Vessel International Maritime Organization number (7-digit).
+      required: false
+      schema:
+        type: string
+  responses:
+    NotFound:
+      description: No vessel or resource matched the supplied identifier.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    TooManyRequests:
+      description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid api-key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
+    Meta:
+      type: object
+      description: Response metadata.
+      properties:
+        duration:
+          type: number
+          description: Server processing time in seconds.
+        endpoint:
+          type: string
+          description: The endpoint that served the request.
+        success:
+          type: boolean
+          description: Whether the request succeeded.
     VesselInfo:
       type: object
       description: Static ship specification data.
@@ -198,28 +266,6 @@ components:
         home_port:
           type: string
           description: Registered home port.
-    Meta:
-      type: object
-      description: Response metadata.
-      properties:
-        duration:
-          type: number
-          description: Server processing time in seconds.
-        endpoint:
-          type: string
-          description: The endpoint that served the request.
-        success:
-          type: boolean
-          description: Whether the request succeeded.
-    VesselFindResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/VesselInfo'
-        meta:
-          $ref: '#/components/schemas/Meta'
     VesselInfoResponse:
       type: object
       properties:
@@ -238,61 +284,15 @@ components:
             error:
               type: string
               description: Error message, for example Too Many Requests.
-  parameters:
-    Uuid:
-      name: uuid
-      in: query
-      description: Datalastic vessel UUID.
-      required: false
-      schema:
-        type: string
-    Mmsi:
-      name: mmsi
-      in: query
-      description: Vessel Maritime Mobile Service Identity (9-digit number).
-      required: false
-      schema:
-        type: string
-    VesselTypeSpecific:
-      name: type_specific
-      in: query
-      description: Vessel subtype filter (for example Crude Oil Tanker). Can be used on its own or combined with type. Use _empty_ to include or exclude vessels whose type is NULL.
-      required: false
-      schema:
-        type: string
-    VesselType:
-      name: type
-      in: query
-      description: Vessel type filter (for example Cargo, Tanker, Fishing).
-      required: false
-      schema:
-        type: string
-    Imo:
-      name: imo
-      in: query
-      description: Vessel International Maritime Organization number (7-digit).
-      required: false
-      schema:
-        type: string
-  responses:
-    NotFound:
-      description: No vessel or resource matched the supplied identifier.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid api-key.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    TooManyRequests:
-      description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+    VesselFindResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/VesselInfo'
+        meta:
+          $ref: '#/components/schemas/Meta'
   securitySchemes:
     apiKey:
       type: apiKey
