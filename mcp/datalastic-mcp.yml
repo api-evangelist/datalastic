@@ -16,54 +16,106 @@ deployment:
 tools_count: 25
 tools:
 - name: estimated_vessel_position
-  description: ''
+  description: Estimate where a vessel is right now when its last AIS position is stale — Datalastic uses
+    terrestrial AIS only, so a ship in open ocean can be many hours old. The position is calculated from
+    the last known fix, the recognized destination p
 - name: find_ports
-  description: ''
+  description: Search the port registry and return matching ports (identity, country, UN/LOCODE, classification,
+    coordinates, maritime area). Search by name (optionally fuzzy), UN/LOCODE, classification, country,
+    or geographically (lat + lon + radius in n
 - name: find_vessels
-  description: ''
+  description: Search the vessel registry by any combination of name (optionally fuzzy), type, flag country,
+    dimensions, tonnage, or year built — no MMSI or IMO needed. Returns up to 500 static specification
+    records per page (tonnage, dimensions, year bui
 - name: get_port
-  description: ''
+  description: Return detailed information for a single port — identity, country, UN/LOCODE, classification,
+    coordinates, maritime area, and the list of terminals (name, operating company, coordinates, address,
+    website). Look up the port by its Datalastic
 - name: get_vessel
-  description: ''
+  description: 'Return the current position and basic information for a single vessel, identified by exactly
+    one of: MMSI (9 digits), IMO (7 digits), or Datalastic UUID. Includes live coordinates, speed, course,
+    heading, navigation status and the raw AIS d'
 - name: get_vessel_history
-  description: ''
+  description: 'Return the historical track (ordered position records) for a single vessel, identified
+    by exactly one of: MMSI (9 digits), IMO (7 digits), or Datalastic UUID. Specify the time range with
+    either ''days'' (last N days) or ''from''/''to'' dates (YYY'
 - name: get_vessel_info
-  description: ''
+  description: 'Return static specifications for a single vessel, identified by exactly one of: MMSI (9
+    digits), IMO (7 digits), or Datalastic UUID. Includes physical dimensions (length, breadth, draught),
+    tonnage and cargo capacity (gross tonnage, deadwei'
 - name: get_vessel_pro
-  description: ''
+  description: 'Richer, heavier variant of get_vessel for a single vessel, identified by exactly one of:
+    MMSI (9 digits), IMO (7 digits), or Datalastic UUID. In addition to the basic position and identity,
+    it returns the recognized destination port and ori'
 - name: get_vessels_bulk
-  description: ''
+  description: Return the current position and basic information for many vessels in a single call — supply
+    any mix of MMSI, IMO and UUID lists, up to 100 identifiers in total. Each result has the same fields
+    as get_vessel. Only successfully found vessels
 - name: get_vessels_in_radius
-  description: ''
+  description: 'Scan a circular area and return all vessels currently within a given radius (nautical
+    miles, greater than 0 and at most 50). Specify the center in exactly one way: lat+lon coordinates,
+    a port (port_unlocode or port_uuid), or a vessel to cen'
 - name: get_weather
-  description: ''
+  description: 'Return weather for one location: marine conditions (wave height/direction/period, swell,
+    sea-surface temperature, ocean currents, sea level, …) plus general atmospheric conditions (air temperature,
+    precipitation, wind speed/direction/gusts,'
 - name: intel_casualties
-  description: ''
+  description: Retrieve a vessel's recorded maritime incidents — groundings, collisions, fires, machinery
+    breakdowns, detentions and similar events — each with a date, category and a narrative description.
+    Useful for risk and condition assessment. Identif
 - name: intel_class
-  description: ''
+  description: 'Return a vessel''s classification society together with its principal technical particulars:
+    gross and net tonnage, deadweight, length overall, length between perpendiculars, beam, depth, design
+    draft, propulsion and engine maker, plus owner'
 - name: intel_companies
-  description: ''
+  description: Look up a maritime company profile — owners, operators, managers and charterers — returning
+    its full and short name, company type, registration country, operating status, contact details, and
+    parent company. Search by the company's own IMO
 - name: intel_drydock
-  description: ''
+  description: Look up planned and past dry-dock dates, special-survey dates, and IOPP (oil-pollution)
+    certificate dates for a vessel, along with its technical manager's contact details. Target a single
+    vessel by imo or name, or scan a forward window acro
 - name: intel_engine
-  description: ''
+  description: 'Return the main-engine specification for a vessel: engine designation (model), builder
+    and designer, propulsion type, and maximum continuous output (MCO) with its unit and rpm. Identify
+    the vessel by imo or name (set fuzzy for loose name ma'
 - name: intel_info
-  description: ''
+  description: 'Check whether the Maritime Reports add-on is active on the connected Datalastic account,
+    and what it offers: vessel ownership/management, classification, engine specs, Port State Control
+    inspections, casualties, drydock schedules, sale & pu'
 - name: intel_inspections
-  description: ''
+  description: 'Retrieve a vessel''s Port State Control (PSC) inspection record: the inspecting authority
+    and port, the inspection type and date, whether the vessel was detained, and the number and description
+    of any deficiencies found. Identify the vessel'
 - name: intel_ownership
-  description: ''
+  description: 'Reveal the commercial control behind a vessel: beneficial owner, operator, technical manager
+    and commercial manager — each with its company IMO and country — plus the P&I club and flag. Look
+    up one vessel by imo or name, or turn the questio'
 - name: intel_report_request
-  description: ''
+  description: Submit an async job to export a FULL bulk dataset for one of the Maritime Reports add-on
+    datasets (dry_dock_dates, casualty, inspections, sales_purchase_demolitions, ownership, class_society,
+    engine, companies). This returns the ENTIRE data
 - name: intel_spd
-  description: ''
+  description: 'Retrieve ship sale-and-purchase transactions for a vessel: second-hand sales, newbuilding
+    deliveries and demolition (scrap) sales, including seller, buyer, reported price, price per lightweight
+    ton, and demolition destination. Useful for as'
 - name: report_list
-  description: ''
+  description: List the caller's recent async report jobs with their statuses — result_url on the ones
+    that are _DONE_, and message explaining the cause on any that are _FAILED_. Use this to recover a
+    report_id, see which reports have finished, or find ou
 - name: report_request
-  description: ''
+  description: Submit an async report job. Reports are generated in the background and can take a while
+    (seconds to many minutes), so this returns a report_id and an initial status (_PENDING_) — it does
+    NOT wait. Submit ONCE, then poll report_status with
 - name: report_status
-  description: ''
+  description: 'Check an async report job by report_id (from report_request or report_list). Returns its
+    status: _PENDING_ or _IN_PROGRESS_ (still generating — wait and check again), _DONE_, or _FAILED_.  When
+    _DONE_, result_url is a download link for the'
 - name: sea_route
-  description: ''
+  description: Calculate a schematic sea route between two points and return it as GeoJSON (a LineString
+    of waypoints) with the total distance in kilometres and nautical miles. Specify the origin and destination
+    each as either coordinates (lat+lon), a por
 tools_source: live tools/list via initialize handshake, 2026-09-11 (signals/audit_mcp_authorship.py --probe)
 authorship: provider
+descriptions_source: live tools/list (authorship probe or saved capture); filled by backfill-tools-from-authorship.py
+  --descriptions, 2026-09-28
