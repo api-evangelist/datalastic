@@ -50,20 +50,16 @@ paths:
         '429':
           $ref: '#/components/responses/TooManyRequests'
 components:
-  responses:
-    TooManyRequests:
-      description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid api-key.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
+    PortFindResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Port'
+        meta:
+          $ref: '#/components/schemas/Meta'
     Meta:
       type: object
       description: Response metadata.
@@ -77,15 +73,17 @@ components:
         success:
           type: boolean
           description: Whether the request succeeded.
-    PortFindResponse:
+    Error:
       type: object
       properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/Port'
         meta:
-          $ref: '#/components/schemas/Meta'
+          type: object
+          properties:
+            success:
+              type: boolean
+            error:
+              type: string
+              description: Error message, for example Too Many Requests.
     Port:
       type: object
       description: Maritime port record.
@@ -120,17 +118,19 @@ components:
         area_level_2:
           type: string
           description: Second administrative area level.
-    Error:
-      type: object
-      properties:
-        meta:
-          type: object
-          properties:
-            success:
-              type: boolean
-            error:
-              type: string
-              description: Error message, for example Too Many Requests.
+  responses:
+    TooManyRequests:
+      description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid api-key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     apiKey:
       type: apiKey

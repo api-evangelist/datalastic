@@ -81,25 +81,6 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
-  responses:
-    NotFound:
-      description: No vessel or resource matched the supplied identifier.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    TooManyRequests:
-      description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid api-key.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
     UsageStats:
       type: object
@@ -114,6 +95,17 @@ components:
         requests:
           type: integer
           description: API requests made this month.
+    Error:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            success:
+              type: boolean
+            error:
+              type: string
+              description: Error message, for example Too Many Requests.
     Report:
       type: object
       description: Asynchronous report job.
@@ -131,17 +123,25 @@ components:
         result_url:
           type: string
           description: Download link for the finished report (present when DONE).
-    Error:
-      type: object
-      properties:
-        meta:
-          type: object
-          properties:
-            success:
-              type: boolean
-            error:
-              type: string
-              description: Error message, for example Too Many Requests.
+  responses:
+    TooManyRequests:
+      description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: No vessel or resource matched the supplied identifier.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid api-key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     apiKey:
       type: apiKey

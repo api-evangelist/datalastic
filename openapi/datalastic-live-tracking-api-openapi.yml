@@ -110,25 +110,6 @@ paths:
         '429':
           $ref: '#/components/responses/TooManyRequests'
 components:
-  responses:
-    NotFound:
-      description: No vessel or resource matched the supplied identifier.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    TooManyRequests:
-      description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid api-key.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
     VesselProPosition:
       allOf:
@@ -151,6 +132,59 @@ components:
           dep_port_unlocode:
             type: string
             description: UN/LOCODE of the departure port.
+    Meta:
+      type: object
+      description: Response metadata.
+      properties:
+        duration:
+          type: number
+          description: Server processing time in seconds.
+        endpoint:
+          type: string
+          description: The endpoint that served the request.
+        success:
+          type: boolean
+          description: Whether the request succeeded.
+    VesselListResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            vessels:
+              type: array
+              items:
+                $ref: '#/components/schemas/VesselPosition'
+            total:
+              type: integer
+              description: Number of vessels returned.
+        meta:
+          $ref: '#/components/schemas/Meta'
+    VesselProResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/VesselProPosition'
+        meta:
+          $ref: '#/components/schemas/Meta'
+    Error:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            success:
+              type: boolean
+            error:
+              type: string
+              description: Error message, for example Too Many Requests.
+    VesselPositionResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/VesselPosition'
+        meta:
+          $ref: '#/components/schemas/Meta'
     VesselPosition:
       type: object
       description: Real-time AIS position data for a vessel.
@@ -203,71 +237,11 @@ components:
         last_position_UTC:
           type: string
           description: UTC timestamp of the last position report.
-    Meta:
-      type: object
-      description: Response metadata.
-      properties:
-        duration:
-          type: number
-          description: Server processing time in seconds.
-        endpoint:
-          type: string
-          description: The endpoint that served the request.
-        success:
-          type: boolean
-          description: Whether the request succeeded.
-    VesselPositionResponse:
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/VesselPosition'
-        meta:
-          $ref: '#/components/schemas/Meta'
-    VesselListResponse:
-      type: object
-      properties:
-        data:
-          type: object
-          properties:
-            vessels:
-              type: array
-              items:
-                $ref: '#/components/schemas/VesselPosition'
-            total:
-              type: integer
-              description: Number of vessels returned.
-        meta:
-          $ref: '#/components/schemas/Meta'
-    VesselProResponse:
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/VesselProPosition'
-        meta:
-          $ref: '#/components/schemas/Meta'
-    Error:
-      type: object
-      properties:
-        meta:
-          type: object
-          properties:
-            success:
-              type: boolean
-            error:
-              type: string
-              description: Error message, for example Too Many Requests.
   parameters:
     Uuid:
       name: uuid
       in: query
       description: Datalastic vessel UUID.
-      required: false
-      schema:
-        type: string
-    Mmsi:
-      name: mmsi
-      in: query
-      description: Vessel Maritime Mobile Service Identity (9-digit number).
       required: false
       schema:
         type: string
@@ -278,6 +252,32 @@ components:
       required: false
       schema:
         type: string
+    Mmsi:
+      name: mmsi
+      in: query
+      description: Vessel Maritime Mobile Service Identity (9-digit number).
+      required: false
+      schema:
+        type: string
+  responses:
+    TooManyRequests:
+      description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: No vessel or resource matched the supplied identifier.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid api-key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     apiKey:
       type: apiKey

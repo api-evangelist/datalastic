@@ -96,71 +96,88 @@ paths:
         '429':
           $ref: '#/components/responses/TooManyRequests'
 components:
-  responses:
-    NotFound:
-      description: No vessel or resource matched the supplied identifier.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    TooManyRequests:
-      description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid api-key.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-  parameters:
-    To:
-      name: to
-      in: query
-      description: End date for the data in YYYY-MM-DD format.
-      required: false
-      schema:
-        type: string
-        format: date
-    From:
-      name: from
-      in: query
-      description: Start date for the data in YYYY-MM-DD format. A maximum of 31 days may be requested from this date.
-      required: false
-      schema:
-        type: string
-        format: date
-    Days:
-      name: days
-      in: query
-      description: Number of days back from today to return data for (for example days=5 returns the last 5 days).
-      required: false
-      schema:
-        type: integer
-    Uuid:
-      name: uuid
-      in: query
-      description: Datalastic vessel UUID.
-      required: false
-      schema:
-        type: string
-    Mmsi:
-      name: mmsi
-      in: query
-      description: Vessel Maritime Mobile Service Identity (9-digit number).
-      required: false
-      schema:
-        type: string
-    Imo:
-      name: imo
-      in: query
-      description: Vessel International Maritime Organization number (7-digit).
-      required: false
-      schema:
-        type: string
   schemas:
+    Meta:
+      type: object
+      description: Response metadata.
+      properties:
+        duration:
+          type: number
+          description: Server processing time in seconds.
+        endpoint:
+          type: string
+          description: The endpoint that served the request.
+        success:
+          type: boolean
+          description: Whether the request succeeded.
+    Error:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            success:
+              type: boolean
+            error:
+              type: string
+              description: Error message, for example Too Many Requests.
+    VesselHistoryResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            uuid:
+              type: string
+              description: Datalastic vessel UUID.
+            name:
+              type: string
+              description: Vessel name.
+            mmsi:
+              type: string
+              description: Maritime Mobile Service Identity.
+            imo:
+              type: string
+              description: International Maritime Organization number.
+            positions:
+              type: array
+              description: Historical track positions.
+              items:
+                type: object
+                properties:
+                  lat:
+                    type: number
+                  lon:
+                    type: number
+                  speed:
+                    type: number
+                  course:
+                    type: number
+                  heading:
+                    type: number
+                  destination:
+                    type: string
+                  last_position_epoch:
+                    type: integer
+                  last_position_UTC:
+                    type: string
+        meta:
+          $ref: '#/components/schemas/Meta'
+    VesselListResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            vessels:
+              type: array
+              items:
+                $ref: '#/components/schemas/VesselPosition'
+            total:
+              type: integer
+              description: Number of vessels returned.
+        meta:
+          $ref: '#/components/schemas/Meta'
     VesselPosition:
       type: object
       description: Real-time AIS position data for a vessel.
@@ -213,87 +230,70 @@ components:
         last_position_UTC:
           type: string
           description: UTC timestamp of the last position report.
-    VesselHistoryResponse:
-      type: object
-      properties:
-        data:
-          type: object
-          properties:
-            uuid:
-              type: string
-              description: Datalastic vessel UUID.
-            name:
-              type: string
-              description: Vessel name.
-            mmsi:
-              type: string
-              description: Maritime Mobile Service Identity.
-            imo:
-              type: string
-              description: International Maritime Organization number.
-            positions:
-              type: array
-              description: Historical track positions.
-              items:
-                type: object
-                properties:
-                  lat:
-                    type: number
-                  lon:
-                    type: number
-                  speed:
-                    type: number
-                  course:
-                    type: number
-                  heading:
-                    type: number
-                  destination:
-                    type: string
-                  last_position_epoch:
-                    type: integer
-                  last_position_UTC:
-                    type: string
-        meta:
-          $ref: '#/components/schemas/Meta'
-    Meta:
-      type: object
-      description: Response metadata.
-      properties:
-        duration:
-          type: number
-          description: Server processing time in seconds.
-        endpoint:
-          type: string
-          description: The endpoint that served the request.
-        success:
-          type: boolean
-          description: Whether the request succeeded.
-    VesselListResponse:
-      type: object
-      properties:
-        data:
-          type: object
-          properties:
-            vessels:
-              type: array
-              items:
-                $ref: '#/components/schemas/VesselPosition'
-            total:
-              type: integer
-              description: Number of vessels returned.
-        meta:
-          $ref: '#/components/schemas/Meta'
-    Error:
-      type: object
-      properties:
-        meta:
-          type: object
-          properties:
-            success:
-              type: boolean
-            error:
-              type: string
-              description: Error message, for example Too Many Requests.
+  parameters:
+    To:
+      name: to
+      in: query
+      description: End date for the data in YYYY-MM-DD format.
+      required: false
+      schema:
+        type: string
+        format: date
+    Uuid:
+      name: uuid
+      in: query
+      description: Datalastic vessel UUID.
+      required: false
+      schema:
+        type: string
+    Imo:
+      name: imo
+      in: query
+      description: Vessel International Maritime Organization number (7-digit).
+      required: false
+      schema:
+        type: string
+    From:
+      name: from
+      in: query
+      description: Start date for the data in YYYY-MM-DD format. A maximum of 31 days may be requested from this date.
+      required: false
+      schema:
+        type: string
+        format: date
+    Mmsi:
+      name: mmsi
+      in: query
+      description: Vessel Maritime Mobile Service Identity (9-digit number).
+      required: false
+      schema:
+        type: string
+    Days:
+      name: days
+      in: query
+      description: Number of days back from today to return data for (for example days=5 returns the last 5 days).
+      required: false
+      schema:
+        type: integer
+  responses:
+    TooManyRequests:
+      description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid api-key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: No vessel or resource matched the supplied identifier.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     apiKey:
       type: apiKey
