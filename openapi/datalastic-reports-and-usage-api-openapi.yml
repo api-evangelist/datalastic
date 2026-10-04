@@ -81,7 +81,43 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
+  responses:
+    TooManyRequests:
+      description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid api-key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: No vessel or resource matched the supplied identifier.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
+    Report:
+      type: object
+      description: Asynchronous report job.
+      properties:
+        report_id:
+          type: string
+          description: Unique report identifier.
+        status:
+          type: string
+          description: Job status.
+          enum:
+          - PENDING
+          - IN_PROGRESS
+          - DONE
+        result_url:
+          type: string
+          description: Download link for the finished report (present when DONE).
     UsageStats:
       type: object
       description: Monthly credit consumption and request statistics.
@@ -106,42 +142,6 @@ components:
             error:
               type: string
               description: Error message, for example Too Many Requests.
-    Report:
-      type: object
-      description: Asynchronous report job.
-      properties:
-        report_id:
-          type: string
-          description: Unique report identifier.
-        status:
-          type: string
-          description: Job status.
-          enum:
-          - PENDING
-          - IN_PROGRESS
-          - DONE
-        result_url:
-          type: string
-          description: Download link for the finished report (present when DONE).
-  responses:
-    TooManyRequests:
-      description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: No vessel or resource matched the supplied identifier.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid api-key.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   securitySchemes:
     apiKey:
       type: apiKey

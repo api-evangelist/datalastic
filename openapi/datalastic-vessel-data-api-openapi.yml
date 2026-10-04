@@ -171,17 +171,6 @@ components:
             $ref: '#/components/schemas/VesselInfo'
         meta:
           $ref: '#/components/schemas/Meta'
-    Error:
-      type: object
-      properties:
-        meta:
-          type: object
-          properties:
-            success:
-              type: boolean
-            error:
-              type: string
-              description: Error message, for example Too Many Requests.
     VesselInfo:
       type: object
       description: Static ship specification data.
@@ -238,42 +227,17 @@ components:
           $ref: '#/components/schemas/VesselInfo'
         meta:
           $ref: '#/components/schemas/Meta'
-  parameters:
-    Uuid:
-      name: uuid
-      in: query
-      description: Datalastic vessel UUID.
-      required: false
-      schema:
-        type: string
-    Imo:
-      name: imo
-      in: query
-      description: Vessel International Maritime Organization number (7-digit).
-      required: false
-      schema:
-        type: string
-    VesselType:
-      name: type
-      in: query
-      description: Vessel type filter (for example Cargo, Tanker, Fishing).
-      required: false
-      schema:
-        type: string
-    Mmsi:
-      name: mmsi
-      in: query
-      description: Vessel Maritime Mobile Service Identity (9-digit number).
-      required: false
-      schema:
-        type: string
-    VesselTypeSpecific:
-      name: type_specific
-      in: query
-      description: Vessel subtype filter (for example Crude Oil Tanker). Can be used on its own or combined with type. Use _empty_ to include or exclude vessels whose type is NULL.
-      required: false
-      schema:
-        type: string
+    Error:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            success:
+              type: boolean
+            error:
+              type: string
+              description: Error message, for example Too Many Requests.
   responses:
     TooManyRequests:
       description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
@@ -293,6 +257,42 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+  parameters:
+    Imo:
+      name: imo
+      in: query
+      description: Vessel International Maritime Organization number (7-digit).
+      required: false
+      schema:
+        type: string
+    Uuid:
+      name: uuid
+      in: query
+      description: Datalastic vessel UUID.
+      required: false
+      schema:
+        type: string
+    VesselType:
+      name: type
+      in: query
+      description: Vessel type filter (for example Cargo, Tanker, Fishing).
+      required: false
+      schema:
+        type: string
+    VesselTypeSpecific:
+      name: type_specific
+      in: query
+      description: Vessel subtype filter (for example Crude Oil Tanker). Can be used on its own or combined with type. Use _empty_ to include or exclude vessels whose type is NULL.
+      required: false
+      schema:
+        type: string
+    Mmsi:
+      name: mmsi
+      in: query
+      description: Vessel Maritime Mobile Service Identity (9-digit number).
+      required: false
+      schema:
+        type: string
   securitySchemes:
     apiKey:
       type: apiKey

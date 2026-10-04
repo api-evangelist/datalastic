@@ -112,32 +112,6 @@ components:
         success:
           type: boolean
           description: Whether the request succeeded.
-    Error:
-      type: object
-      properties:
-        meta:
-          type: object
-          properties:
-            success:
-              type: boolean
-            error:
-              type: string
-              description: Error message, for example Too Many Requests.
-    VesselListResponse:
-      type: object
-      properties:
-        data:
-          type: object
-          properties:
-            vessels:
-              type: array
-              items:
-                $ref: '#/components/schemas/VesselPosition'
-            total:
-              type: integer
-              description: Number of vessels returned.
-        meta:
-          $ref: '#/components/schemas/Meta'
     VesselPosition:
       type: object
       description: Real-time AIS position data for a vessel.
@@ -190,6 +164,45 @@ components:
         last_position_UTC:
           type: string
           description: UTC timestamp of the last position report.
+    VesselListResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            vessels:
+              type: array
+              items:
+                $ref: '#/components/schemas/VesselPosition'
+            total:
+              type: integer
+              description: Number of vessels returned.
+        meta:
+          $ref: '#/components/schemas/Meta'
+    Error:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            success:
+              type: boolean
+            error:
+              type: string
+              description: Error message, for example Too Many Requests.
+  responses:
+    TooManyRequests:
+      description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid api-key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   parameters:
     VesselType:
       name: type
@@ -205,19 +218,6 @@ components:
       required: false
       schema:
         type: string
-  responses:
-    TooManyRequests:
-      description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid api-key.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   securitySchemes:
     apiKey:
       type: apiKey
