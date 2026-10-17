@@ -99,6 +99,32 @@ paths:
           $ref: '#/components/responses/TooManyRequests'
 components:
   schemas:
+    Error:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            success:
+              type: boolean
+            error:
+              type: string
+              description: Error message, for example Too Many Requests.
+    VesselListResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            vessels:
+              type: array
+              items:
+                $ref: '#/components/schemas/VesselPosition'
+            total:
+              type: integer
+              description: Number of vessels returned.
+        meta:
+          $ref: '#/components/schemas/Meta'
     Meta:
       type: object
       description: Response metadata.
@@ -164,32 +190,6 @@ components:
         last_position_UTC:
           type: string
           description: UTC timestamp of the last position report.
-    VesselListResponse:
-      type: object
-      properties:
-        data:
-          type: object
-          properties:
-            vessels:
-              type: array
-              items:
-                $ref: '#/components/schemas/VesselPosition'
-            total:
-              type: integer
-              description: Number of vessels returned.
-        meta:
-          $ref: '#/components/schemas/Meta'
-    Error:
-      type: object
-      properties:
-        meta:
-          type: object
-          properties:
-            success:
-              type: boolean
-            error:
-              type: string
-              description: Error message, for example Too Many Requests.
   responses:
     TooManyRequests:
       description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
@@ -204,17 +204,17 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
   parameters:
-    VesselType:
-      name: type
-      in: query
-      description: Vessel type filter (for example Cargo, Tanker, Fishing).
-      required: false
-      schema:
-        type: string
     VesselTypeSpecific:
       name: type_specific
       in: query
       description: Vessel subtype filter (for example Crude Oil Tanker). Can be used on its own or combined with type. Use _empty_ to include or exclude vessels whose type is NULL.
+      required: false
+      schema:
+        type: string
+    VesselType:
+      name: type
+      in: query
+      description: Vessel type filter (for example Cargo, Tanker, Fishing).
       required: false
       schema:
         type: string

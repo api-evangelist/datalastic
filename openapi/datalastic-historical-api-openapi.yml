@@ -108,58 +108,6 @@ components:
             error:
               type: string
               description: Error message, for example Too Many Requests.
-    VesselPosition:
-      type: object
-      description: Real-time AIS position data for a vessel.
-      properties:
-        uuid:
-          type: string
-          description: Datalastic vessel UUID.
-        name:
-          type: string
-          description: Vessel name.
-        mmsi:
-          type: string
-          description: Maritime Mobile Service Identity.
-        imo:
-          type: string
-          description: International Maritime Organization number.
-        country_iso:
-          type: string
-          description: Flag country ISO code.
-        type:
-          type: string
-          description: Vessel type.
-        type_specific:
-          type: string
-          description: Vessel subtype.
-        lat:
-          type: number
-          description: Latitude of the last reported position.
-        lon:
-          type: number
-          description: Longitude of the last reported position.
-        speed:
-          type: number
-          description: Speed over ground in knots.
-        course:
-          type: number
-          description: Course over ground in degrees.
-        heading:
-          type: number
-          description: True heading in degrees.
-        navigation_status:
-          type: string
-          description: AIS navigational status.
-        destination:
-          type: string
-          description: Reported destination.
-        last_position_epoch:
-          type: integer
-          description: Unix timestamp of the last position report.
-        last_position_UTC:
-          type: string
-          description: UTC timestamp of the last position report.
     VesselHistoryResponse:
       type: object
       properties:
@@ -230,11 +178,97 @@ components:
         success:
           type: boolean
           description: Whether the request succeeded.
+    VesselPosition:
+      type: object
+      description: Real-time AIS position data for a vessel.
+      properties:
+        uuid:
+          type: string
+          description: Datalastic vessel UUID.
+        name:
+          type: string
+          description: Vessel name.
+        mmsi:
+          type: string
+          description: Maritime Mobile Service Identity.
+        imo:
+          type: string
+          description: International Maritime Organization number.
+        country_iso:
+          type: string
+          description: Flag country ISO code.
+        type:
+          type: string
+          description: Vessel type.
+        type_specific:
+          type: string
+          description: Vessel subtype.
+        lat:
+          type: number
+          description: Latitude of the last reported position.
+        lon:
+          type: number
+          description: Longitude of the last reported position.
+        speed:
+          type: number
+          description: Speed over ground in knots.
+        course:
+          type: number
+          description: Course over ground in degrees.
+        heading:
+          type: number
+          description: True heading in degrees.
+        navigation_status:
+          type: string
+          description: AIS navigational status.
+        destination:
+          type: string
+          description: Reported destination.
+        last_position_epoch:
+          type: integer
+          description: Unix timestamp of the last position report.
+        last_position_UTC:
+          type: string
+          description: UTC timestamp of the last position report.
+  responses:
+    TooManyRequests:
+      description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: No vessel or resource matched the supplied identifier.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid api-key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   parameters:
     Imo:
       name: imo
       in: query
       description: Vessel International Maritime Organization number (7-digit).
+      required: false
+      schema:
+        type: string
+    From:
+      name: from
+      in: query
+      description: Start date for the data in YYYY-MM-DD format. A maximum of 31 days may be requested from this date.
+      required: false
+      schema:
+        type: string
+        format: date
+    Uuid:
+      name: uuid
+      in: query
+      description: Datalastic vessel UUID.
       required: false
       schema:
         type: string
@@ -253,13 +287,6 @@ components:
       schema:
         type: string
         format: date
-    Uuid:
-      name: uuid
-      in: query
-      description: Datalastic vessel UUID.
-      required: false
-      schema:
-        type: string
     Mmsi:
       name: mmsi
       in: query
@@ -267,33 +294,6 @@ components:
       required: false
       schema:
         type: string
-    From:
-      name: from
-      in: query
-      description: Start date for the data in YYYY-MM-DD format. A maximum of 31 days may be requested from this date.
-      required: false
-      schema:
-        type: string
-        format: date
-  responses:
-    NotFound:
-      description: No vessel or resource matched the supplied identifier.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    TooManyRequests:
-      description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid api-key.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   securitySchemes:
     apiKey:
       type: apiKey

@@ -149,19 +149,17 @@ paths:
           $ref: '#/components/responses/TooManyRequests'
 components:
   schemas:
-    Meta:
+    Error:
       type: object
-      description: Response metadata.
       properties:
-        duration:
-          type: number
-          description: Server processing time in seconds.
-        endpoint:
-          type: string
-          description: The endpoint that served the request.
-        success:
-          type: boolean
-          description: Whether the request succeeded.
+        meta:
+          type: object
+          properties:
+            success:
+              type: boolean
+            error:
+              type: string
+              description: Error message, for example Too Many Requests.
     VesselFindResponse:
       type: object
       properties:
@@ -220,6 +218,19 @@ components:
         home_port:
           type: string
           description: Registered home port.
+    Meta:
+      type: object
+      description: Response metadata.
+      properties:
+        duration:
+          type: number
+          description: Server processing time in seconds.
+        endpoint:
+          type: string
+          description: The endpoint that served the request.
+        success:
+          type: boolean
+          description: Whether the request succeeded.
     VesselInfoResponse:
       type: object
       properties:
@@ -227,17 +238,6 @@ components:
           $ref: '#/components/schemas/VesselInfo'
         meta:
           $ref: '#/components/schemas/Meta'
-    Error:
-      type: object
-      properties:
-        meta:
-          type: object
-          properties:
-            success:
-              type: boolean
-            error:
-              type: string
-              description: Error message, for example Too Many Requests.
   responses:
     TooManyRequests:
       description: Rate limit exceeded. All plans share a limit of 600 API calls per minute.
@@ -265,6 +265,13 @@ components:
       required: false
       schema:
         type: string
+    VesselTypeSpecific:
+      name: type_specific
+      in: query
+      description: Vessel subtype filter (for example Crude Oil Tanker). Can be used on its own or combined with type. Use _empty_ to include or exclude vessels whose type is NULL.
+      required: false
+      schema:
+        type: string
     Uuid:
       name: uuid
       in: query
@@ -276,13 +283,6 @@ components:
       name: type
       in: query
       description: Vessel type filter (for example Cargo, Tanker, Fishing).
-      required: false
-      schema:
-        type: string
-    VesselTypeSpecific:
-      name: type_specific
-      in: query
-      description: Vessel subtype filter (for example Crude Oil Tanker). Can be used on its own or combined with type. Use _empty_ to include or exclude vessels whose type is NULL.
       required: false
       schema:
         type: string
