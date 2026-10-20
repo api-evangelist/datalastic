@@ -16,105 +16,207 @@ deployment:
 tools_count: 25
 tools:
 - name: estimated_vessel_position
-  description: Estimate where a vessel is right now when its last AIS position is stale — Datalastic uses
-    terrestrial AIS only, so a ship in open ocean can be many hours old. The position is calculated from
-    the last known fix, the recognized destination p
+  description: 'Estimate where a vessel is right now when its last AIS position is stale — Datalastic
+    uses terrestrial AIS only, so a ship in open ocean can be many hours old. The position is calculated
+    from the last known fix, the recognized destination port, and the route-based ETA. It is an ESTIMATE,
+    not an observed position.
+
+
+    Tool selection — use this LAST: prefer get_vessel for a live position (cheapest); prefer get_vessel_pro
+    when the user wants the ETA or recognized destination. Only reach for this tool when BOTH hold: (1)
+    a prior get_vessel/get_vessel_pro lookup shows the last known position is old, and (2) the vessel
+    has a destination and an ETA. It is the heaviest call (it builds a route) and adds nothing when get_vessel
+    already returns a recent position.
+
+
+    Because it is an estimate, OFFER it to the user first rather than calling it silently, and when you
+    present the result make clear it is an estimated position, not a real fix. If estimated_position equals
+    the last known lat/lon, the system could not extrapolate (the position is recent, or the ETA is missing/outdated)
+    — say so instead of implying movement.'
 - name: find_ports
   description: Search the port registry and return matching ports (identity, country, UN/LOCODE, classification,
     coordinates, maritime area). Search by name (optionally fuzzy), UN/LOCODE, classification, country,
-    or geographically (lat + lon + radius in n
+    or geographically (lat + lon + radius in nautical miles). Always returns a list, even for a single
+    match. Use this to discover ports or resolve a name to a UN/LOCODE/uuid; for full detail on one known
+    port (including terminals) use get_port.
 - name: find_vessels
-  description: Search the vessel registry by any combination of name (optionally fuzzy), type, flag country,
+  description: 'Search the vessel registry by any combination of name (optionally fuzzy), type, flag country,
     dimensions, tonnage, or year built — no MMSI or IMO needed. Returns up to 500 static specification
-    records per page (tonnage, dimensions, year bui
+    records per page (tonnage, dimensions, year built, home port, callsign, etc.) — this is reference
+    data, NOT live position. Provide at least one search criterion; use the response''s next token via
+    the next argument to page. Credits: 1 per vessel found. For a vessel''s live position use get_vessel;
+    for vessels currently in an area use get_vessels_in_radius.'
 - name: get_port
   description: Return detailed information for a single port — identity, country, UN/LOCODE, classification,
     coordinates, maritime area, and the list of terminals (name, operating company, coordinates, address,
-    website). Look up the port by its Datalastic
+    website). Look up the port by its Datalastic uuid or its UN/LOCODE (exactly one). To search for a
+    port by name or location, or when you don't have an exact identifier, use find_ports first.
 - name: get_vessel
   description: 'Return the current position and basic information for a single vessel, identified by exactly
     one of: MMSI (9 digits), IMO (7 digits), or Datalastic UUID. Includes live coordinates, speed, course,
-    heading, navigation status and the raw AIS d'
+    heading, navigation status and the raw AIS destination text. This is the default tool for vessel lookups.
+    For the recognized destination or origin port (name + UNLOCODE), actual departure time (ATD), a reliable
+    estimated time of arrival (ETA), or draught, use get_vessel_pro instead.'
 - name: get_vessel_history
   description: 'Return the historical track (ordered position records) for a single vessel, identified
     by exactly one of: MMSI (9 digits), IMO (7 digits), or Datalastic UUID. Specify the time range with
-    either ''days'' (last N days) or ''from''/''to'' dates (YYY'
+    either ''days'' (last N days) or ''from''/''to'' dates (YYYY-MM-DD, ''to'' at most 30 days after ''from'').
+    Data is available since 2021-08-10; only position changes are stored, so stationary periods may have
+    gaps.'
 - name: get_vessel_info
   description: 'Return static specifications for a single vessel, identified by exactly one of: MMSI (9
     digits), IMO (7 digits), or Datalastic UUID. Includes physical dimensions (length, breadth, draught),
-    tonnage and cargo capacity (gross tonnage, deadwei'
+    tonnage and cargo capacity (gross tonnage, deadweight, TEU, liquid gas), speed characteristics, year
+    built, flag country, callsign and home port. This is reference data, NOT live position — use get_vessel
+    for the current position, or find_vessels to search the registry by attributes.'
 - name: get_vessel_pro
   description: 'Richer, heavier variant of get_vessel for a single vessel, identified by exactly one of:
     MMSI (9 digits), IMO (7 digits), or Datalastic UUID. In addition to the basic position and identity,
-    it returns the recognized destination port and ori'
+    it returns the recognized destination port and origin port (name + UNLOCODE), the actual time of departure
+    (ATD), a reliable estimated time of arrival (ETA), and current draught. Prefer get_vessel for ordinary
+    position or identity lookups; use get_vessel_pro only when the user asks about the destination or
+    origin port, departure time, arrival time or ETA, or draught, as it is heavier on the backend. If
+    the last known position is stale (the vessel may be out of terrestrial AIS range) and it has a destination
+    and ETA, consider offering estimated_vessel_position to estimate where it is now.'
 - name: get_vessels_bulk
   description: Return the current position and basic information for many vessels in a single call — supply
     any mix of MMSI, IMO and UUID lists, up to 100 identifiers in total. Each result has the same fields
-    as get_vessel. Only successfully found vessels
+    as get_vessel. Only successfully found vessels are returned (the response includes how many were found).
+    Use this instead of many get_vessel calls when looking up a known set of vessels; for a single vessel
+    use get_vessel.
 - name: get_vessels_in_radius
   description: 'Scan a circular area and return all vessels currently within a given radius (nautical
     miles, greater than 0 and at most 50). Specify the center in exactly one way: lat+lon coordinates,
-    a port (port_unlocode or port_uuid), or a vessel to cen'
+    a port (port_unlocode or port_uuid), or a vessel to center on (mmsi/imo/uuid). Optional filters: type,
+    type_specific, exclude, nav_status, and include_unknown_type. Returns up to 500 vessels per page,
+    each with its distance (nautical miles) from the center; if more remain, pass the response''s ''next''
+    token via the ''next'' argument to page through them. Credits are charged per vessel found.'
 - name: get_weather
   description: 'Return weather for one location: marine conditions (wave height/direction/period, swell,
     sea-surface temperature, ocean currents, sea level, …) plus general atmospheric conditions (air temperature,
-    precipitation, wind speed/direction/gusts,'
+    precipitation, wind speed/direction/gusts, humidity, cloud cover, visibility, pressure, weather code,
+    …). Specify the location as exactly one of: coordinates (lat+lon), a vessel (mmsi/imo/uuid — weather
+    near its last known position), or a port (port_unlocode/port_uuid). Use mode to choose current conditions
+    (default), a 7-day daily forecast, a 7-day hourly forecast, or any combination. Each weather field
+    has a matching entry in the corresponding *_units object.'
 - name: intel_casualties
   description: Retrieve a vessel's recorded maritime incidents — groundings, collisions, fires, machinery
     breakdowns, detentions and similar events — each with a date, category and a narrative description.
-    Useful for risk and condition assessment. Identif
+    Useful for risk and condition assessment. Identify the vessel by imo or name, and optionally bound
+    the period with from / to. Part of the Maritime Reports add-on.
 - name: intel_class
   description: 'Return a vessel''s classification society together with its principal technical particulars:
     gross and net tonnage, deadweight, length overall, length between perpendiculars, beam, depth, design
-    draft, propulsion and engine maker, plus owner'
+    draft, propulsion and engine maker, plus owner/manager and next survey dates. Identify the vessel
+    by imo or name (set fuzzy for loose name matching), or filter by owner/manager. Part of the Maritime
+    Reports add-on.'
 - name: intel_companies
   description: Look up a maritime company profile — owners, operators, managers and charterers — returning
     its full and short name, company type, registration country, operating status, contact details, and
-    parent company. Search by the company's own IMO
+    parent company. Search by the company's own IMO number (company_imo) or by name. This is a company
+    directory, so company_imo refers to the company (not a vessel); to find the companies behind a specific
+    ship use intel_ownership. Part of the Maritime Reports add-on.
 - name: intel_drydock
   description: Look up planned and past dry-dock dates, special-survey dates, and IOPP (oil-pollution)
     certificate dates for a vessel, along with its technical manager's contact details. Target a single
-    vessel by imo or name, or scan a forward window acro
+    vessel by imo or name, or scan a forward window across the fleet with dry_dock_from / dry_dock_to
+    to find vessels due for drydocking in a date range. Part of the Maritime Reports add-on.
 - name: intel_engine
   description: 'Return the main-engine specification for a vessel: engine designation (model), builder
     and designer, propulsion type, and maximum continuous output (MCO) with its unit and rpm. Identify
-    the vessel by imo or name (set fuzzy for loose name ma'
+    the vessel by imo or name (set fuzzy for loose name matching). Part of the Maritime Reports add-on.'
 - name: intel_info
   description: 'Check whether the Maritime Reports add-on is active on the connected Datalastic account,
     and what it offers: vessel ownership/management, classification, engine specs, Port State Control
-    inspections, casualties, drydock schedules, sale & pu'
+    inspections, casualties, drydock schedules, sale & purchase records, company profiles, sea routes,
+    estimated out-of-AIS positions, and bulk dataset exports. Use this when the user asks whether they
+    have (or what is included in) the add-on, when an intel_* tool reports the add-on is missing, or after
+    the user says they have purchased or updated their subscription.'
 - name: intel_inspections
   description: 'Retrieve a vessel''s Port State Control (PSC) inspection record: the inspecting authority
     and port, the inspection type and date, whether the vessel was detained, and the number and description
-    of any deficiencies found. Identify the vessel'
+    of any deficiencies found. Identify the vessel by imo or name, and optionally bound the period with
+    from / to. Part of the Maritime Reports add-on.'
 - name: intel_ownership
   description: 'Reveal the commercial control behind a vessel: beneficial owner, operator, technical manager
     and commercial manager — each with its company IMO and country — plus the P&I club and flag. Look
-    up one vessel by imo or name, or turn the questio'
+    up one vessel by imo or name, or turn the question around and pass a company name (beneficial_owner,
+    operator, technical_manager or commercial_manager) to list every vessel that company controls. Part
+    of the Maritime Reports add-on.'
 - name: intel_report_request
-  description: Submit an async job to export a FULL bulk dataset for one of the Maritime Reports add-on
+  description: 'Submit an async job to export a FULL bulk dataset for one of the Maritime Reports add-on
     datasets (dry_dock_dates, casualty, inspections, sales_purchase_demolitions, ownership, class_society,
-    engine, companies). This returns the ENTIRE data
+    engine, companies). This returns the ENTIRE dataset (all records), not one vessel — for a single vessel
+    use the matching lookup tool instead (e.g. intel_ownership, intel_inspections). Like all reports it
+    is asynchronous: this returns a report_id and a _PENDING_ status without waiting; submit ONCE, then
+    poll report_status with that report_id until _DONE_, which yields a result_url to hand to the user
+    to download. Do not resubmit while a job is running, and if a report comes back _FAILED_, do not automatically
+    submit a replacement — report the message to the user first. At most 10 reports may be pending per
+    account at once (across every report type), so a retry loop can exhaust the queue. The server never
+    downloads the file itself. Part of the Maritime Reports add-on.'
 - name: intel_spd
   description: 'Retrieve ship sale-and-purchase transactions for a vessel: second-hand sales, newbuilding
     deliveries and demolition (scrap) sales, including seller, buyer, reported price, price per lightweight
-    ton, and demolition destination. Useful for as'
+    ton, and demolition destination. Useful for asset valuation and market tracking. Identify the vessel
+    by imo or name, and optionally bound the period with from / to. Part of the Maritime Reports add-on.'
 - name: report_list
   description: List the caller's recent async report jobs with their statuses — result_url on the ones
     that are _DONE_, and message explaining the cause on any that are _FAILED_. Use this to recover a
-    report_id, see which reports have finished, or find ou
+    report_id, see which reports have finished, or find out why one failed — for example if a report was
+    submitted earlier and its id was lost. Listing is free and never re-runs a report.
 - name: report_request
-  description: Submit an async report job. Reports are generated in the background and can take a while
+  description: 'Submit an async report job. Reports are generated in the background and can take a while
     (seconds to many minutes), so this returns a report_id and an initial status (_PENDING_) — it does
-    NOT wait. Submit ONCE, then poll report_status with
+    NOT wait. Submit ONCE, then poll report_status with the returned report_id until _DONE_, which yields
+    a result_url. Do not resubmit while a job is running. If a report comes back _FAILED_, do not automatically
+    submit a replacement — report the message to the user first. At most 10 reports may be pending per
+    account at once; further submissions are rejected until some finish. When done, give the user the
+    result_url to download; the server never downloads report files itself.
+
+
+    Supported report_type values:
+
+    - request_usage: a FREE log of your account''s API usage (endpoint, credits, timestamp); optional
+    from/to (<=31 days), default last month.
+
+    - vessel_list: the full vessel database (no other parameters).
+
+    - port_list: the full ports database (no other parameters).
+
+    - inradius_history: all vessels that passed through an area in a time window; REQUIRES lat, lon, radius
+    (<=50 NM), from and to (<=7 days apart).
+
+
+    Note: vessel_list, port_list and inradius_history consume API credits (vessel_list and inradius_history
+    can be substantial) — it''s good to tell the user before submitting. For the add-on bulk datasets
+    (ownership, inspections, etc.) use intel_report_request instead.'
 - name: report_status
   description: 'Check an async report job by report_id (from report_request or report_list). Returns its
-    status: _PENDING_ or _IN_PROGRESS_ (still generating — wait and check again), _DONE_, or _FAILED_.  When
-    _DONE_, result_url is a download link for the'
+    status: _PENDING_ or _IN_PROGRESS_ (still generating — wait and check again), _DONE_, or _FAILED_.
+
+
+    When _DONE_, result_url is a download link for the result ZIP; hand it to the user. Links are time-limited
+    — if one has expired, run report_status again for a fresh link. The server never downloads the file
+    itself.
+
+
+    _FAILED_ is terminal. Stop polling: it will never become _DONE_ and there will be no result_url. Read
+    the message field and relay it to the user — it is written for a person and explains the cause. Do
+    not resubmit on your own: tell the user what failed and let them decide. If the message points at
+    a parameter the user can correct, offer the corrected submission rather than making it silently.
+
+
+    A report going from _IN_PROGRESS_ back to _PENDING_ is an automatic retry, not a failure. Keep polling.
+
+
+    Failed reports are not charged, and polling is free — it never re-runs the report or deducts credits.'
 - name: sea_route
   description: Calculate a schematic sea route between two points and return it as GeoJSON (a LineString
     of waypoints) with the total distance in kilometres and nautical miles. Specify the origin and destination
-    each as either coordinates (lat+lon), a por
+    each as either coordinates (lat+lon), a port UUID, or a port UN/LOCODE. ⚠️ This is a SCHEMATIC sea
+    route, not a navigable one. It does not account for actual navigation, hazards, traffic separation,
+    drafts or local rules — do NOT use it for real-world sailing. Use it for estimating distance and travel
+    time, visualizing the approximate path/shape, and similar analysis. Part of the Maritime Reports add-on.
 tools_source: live tools/list via initialize handshake, 2026-09-11 (signals/audit_mcp_authorship.py --probe)
 authorship: provider
 descriptions_source: live tools/list (authorship probe or saved capture); filled by backfill-tools-from-authorship.py
