@@ -1,4 +1,4 @@
-# Datalastic (datalastic)
+# Datalastic
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -64,162 +64,137 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Datalastic is a maritime data API providing real-time AIS vessel tracking, historical ship movements, vessel specifications, and global port data over a simple REST interface. A database of 750,000+ ships is queryable by MMSI, IMO, or UUID for live position, speed, course, heading, destination, and ETA, plus zone traffic monitoring around any coordinate or port, up to 31 days of historical track per request, vessel and port finder search, and asynchronous bulk reports. There is no free tier - access requires a paid subscription (14-day paid trials from EUR 9) with a monthly database-credit model, and every request authenticates with an `api-key` query parameter. All plans share a 600 calls/minute rate limit. The API is documented publicly, so endpoints and parameters can be evaluated before subscribing.
+Datalastic is a maritime data API providing real-time AIS vessel tracking, historical ship movements, vessel specifications, and global port data over a simple REST interface. A database of 750,000+ ships is queryable by MMSI, IMO, or UUID for live position, speed, course, heading, destination, and ETA, plus zone traffic monitoring around any coordinate or port, up to 31 days of historical track per request, vessel and port finder search, and asynchronous bulk reports. Access is subscription-based with a monthly credit model and api-key authentication.
 
-**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/datalastic/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/datalastic/refs/heads/main/apis.yml)
+**Areas:** Vessel Tracking · Maritime · AIS · Ships · Ports · Shipping
 
-## Tags
+## Datalastic on APIs.io
 
-- Vessel Tracking
-- Maritime
-- AIS
-- Ships
-- Ports
-- Shipping
+Everything profiled for Datalastic is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/datalastic/](https://apis.io/providers/datalastic/)** — or go straight to one of the APIs or properties below.
 
-## Timestamps
+### APIs (6)
 
-- **Created:** 2026-07-11
-- **Modified:** 2026-07-11
+- [Datalastic Historical API](https://apis.io/apis/datalastic/datalastic-historical-api/) — Past AIS positions for vessels and zones.
+- [Datalastic Live Tracking API](https://apis.io/apis/datalastic/datalastic-live-tracking-api/) — Real-time AIS vessel position and voyage data.
+- [Datalastic Ports API](https://apis.io/apis/datalastic/datalastic-ports-api/) — Global maritime port search.
+- [Datalastic Reports and Usage API](https://apis.io/apis/datalastic/datalastic-reports-and-usage-api/) — Asynchronous bulk report jobs and account usage statistics.
+- [Datalastic Vessel Data API](https://apis.io/apis/datalastic/datalastic-vessel-data-api/) — Static ship specifications and vessel search.
+- [Datalastic Zone Traffic API](https://apis.io/apis/datalastic/datalastic-zone-traffic-api/) — Vessels within a radius of a point, port, or moving vessel.
 
-## APIs
+### Published properties
 
-### Datalastic Live Vessel Tracking API
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-Real-time AIS position for any ship by UUID, MMSI, or IMO. The `/vessel` endpoint returns location, speed, course, heading, navigational status, destination, and timestamp; `/vessel_pro` adds ETA, actual time of departure, current draft, and UN/LOCODE destination and departure ports; `/vessel_bulk` tracks up to 100 vessels in a single call.
+#### MCP servers (1)
 
-- **Human URL:** [https://datalastic.com/ship-tracking-api/](https://datalastic.com/ship-tracking-api/)
-- **Base URL:** `https://api.datalastic.com/api/v0`
+Model Context Protocol servers that expose the API to agents.
 
-#### Tags
+- [datalastic](https://apis.io/servers/datalastic/datalastic/)
 
-- Vessel Tracking
-- AIS
-- Live Position
+#### Agentic access (1)
 
-#### Properties
+Which operations an agent can call, which act, and which need a human in the loop.
 
-- [Documentation](https://datalastic.com/ship-tracking-api/)
-- [API Reference](https://datalastic.com/api-reference/)
-- [OpenAPI](openapi/datalastic-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/datalastic.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/datalastic.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+- [Datalastic Agentic Access](https://apis.io/agentic-access/datalastic/datalastic-agentic-access/)
 
-### Datalastic Vessel Traffic in Radius API
+#### Collections (7)
 
-Zone traffic monitoring with `/vessel_inradius` - all vessels within a radius (max 50 nautical miles) around a static point (lat/lon, port UUID, or port UN/LOCODE) or a moving vessel (UUID, MMSI, or IMO), with filters for vessel type, subtype, exclusions, and navigational status. `/inradius_history` replays past traffic for the same zones.
+Postman and Open Collection request collections.
 
-- **Human URL:** [https://datalastic.com/api-reference/](https://datalastic.com/api-reference/)
-- **Base URL:** `https://api.datalastic.com/api/v0`
+- [Datalastic Maritime API](https://apis.io/collections/datalastic/open-datalastic/)
+- [Datalastic Maritime Historical API](https://apis.io/collections/datalastic/open-datalastic-historical-api/)
+- [Datalastic Maritime Historical Live Tracking API](https://apis.io/collections/datalastic/open-datalastic-live-tracking-api/)
+- [Datalastic Maritime Historical Ports API](https://apis.io/collections/datalastic/open-datalastic-ports-api/)
+- [Datalastic Maritime Historical Reports and Usage API](https://apis.io/collections/datalastic/open-datalastic-reports-and-usage-api/)
+- [Datalastic Maritime Historical Vessel Data API](https://apis.io/collections/datalastic/open-datalastic-vessel-data-api/)
+- [Datalastic Maritime Historical Zone Traffic API](https://apis.io/collections/datalastic/open-datalastic-zone-traffic-api/)
 
-#### Tags
+#### Security (2)
 
-- Zone Monitoring
-- Port Traffic
-- AIS
+Authentication, trust centre, and vulnerability disclosure.
 
-#### Properties
+- [Datalastic Authentication](https://apis.io/security/datalastic/datalastic-authentication/)
+- [Datalastic Domain Security](https://apis.io/security/datalastic/datalastic-domain-security/)
 
-- [API Reference](https://datalastic.com/api-reference/)
-- [OpenAPI](openapi/datalastic-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/datalastic.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/datalastic.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+#### Plans and pricing (1)
 
-### Datalastic Historical Vessel Track API
+Published plans, tiers and prices.
 
-Historical AIS track for a vessel via `/vessel_history` - past positions filtered by `uuid`, `mmsi`, or `imo` plus a `days` lookback or an explicit `from`/`to` date range (YYYY-MM-DD, maximum 31 days from the `from` date). Each vessel-day of data consumes one credit.
+- [Datalastic Plans Pricing](https://apis.io/plans/datalastic/datalastic-plans-pricing/)
 
-- **Human URL:** [https://datalastic.com/ship-historical-data-api/](https://datalastic.com/ship-historical-data-api/)
-- **Base URL:** `https://api.datalastic.com/api/v0`
+#### Rate limits (1)
 
-#### Tags
+Published request limits.
 
-- Historical Data
-- Vessel Tracking
-- AIS
+- [Datalastic Rate Limits](https://apis.io/rate-limits/datalastic/datalastic-rate-limits/)
 
-#### Properties
+#### FinOps (1)
 
-- [Documentation](https://datalastic.com/ship-historical-data-api/)
-- [API Reference](https://datalastic.com/api-reference/)
-- [OpenAPI](openapi/datalastic-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/datalastic.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/datalastic.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+What the API costs to run, by operation.
 
-### Datalastic Vessel Info and Finder API
+- [Datalastic Finops](https://apis.io/finops/datalastic/datalastic-finops/)
 
-Static ship data and search. `/vessel_info` returns specifications for a single vessel - MMSI, IMO, country, call sign, type and subtype, gross tonnage, deadweight, TEU, length, breadth, year built, and home port. `/vessel_find` searches the 750,000+ ship database by name (exact or fuzzy), type, subtype, country, tonnage, deadweight, dimensions, and year built.
+## Where to find this API
 
-- **Human URL:** [https://datalastic.com/vessel-finder-api/](https://datalastic.com/vessel-finder-api/)
-- **Base URL:** `https://api.datalastic.com/api/v0`
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
-#### Tags
-
-- Ship Specifications
-- Search
-- Ships
-
-#### Properties
-
-- [Documentation](https://datalastic.com/vessel-finder-api/)
-- [API Reference](https://datalastic.com/api-reference/)
-- [OpenAPI](openapi/datalastic-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/datalastic.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/datalastic.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### Datalastic Port Finder API
-
-Global maritime port data via `/port_find` - search ports by name and get back port name, country ISO code and name, UN/LOCODE, port type, latitude/longitude, and administrative area levels. Port UUIDs and UN/LOCODEs feed directly into the traffic-in-radius endpoints.
-
-- **Human URL:** [https://datalastic.com/api-reference/](https://datalastic.com/api-reference/)
-- **Base URL:** `https://api.datalastic.com/api/v0`
-
-#### Tags
-
-- Ports
-- Maritime
-- Search
-
-#### Properties
-
-- [API Reference](https://datalastic.com/api-reference/)
-- [OpenAPI](openapi/datalastic-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/datalastic.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/datalastic.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### Datalastic Reports and Usage API
-
-Asynchronous bulk report jobs and account metering. `POST /report` submits a report job and `GET /report` polls its status (PENDING, IN_PROGRESS, DONE) and returns a `result_url` when complete; `report_id=_all` lists all reports. `GET /stat` returns current monthly credit consumption and request statistics at no credit cost.
-
-- **Human URL:** [https://datalastic.com/api-reference/](https://datalastic.com/api-reference/)
-- **Base URL:** `https://api.datalastic.com/api/v0`
-
-#### Tags
-
-- Reports
-- Usage
-- Bulk Data
-
-#### Properties
-
-- [API Reference](https://datalastic.com/api-reference/)
-- [OpenAPI](openapi/datalastic-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/datalastic.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/datalastic.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-## Common Properties
-
-- [LinkedIn](https://www.linkedin.com/company/datalastic/)
 - [Website](https://datalastic.com)
 - [Documentation](https://docs.datalastic.com/)
-- [API Reference](https://datalastic.com/api-reference/)
+- [API reference](https://datalastic.com/api-reference/)
 - [Pricing](https://datalastic.com/pricing/)
-- [Plans](plans/datalastic-plans-pricing.yml)
-- [Rate Limits](rate-limits/datalastic-rate-limits.yml)
-- [Fin Ops](finops/datalastic-finops.yml)
 - [Blog](https://datalastic.com/blog/)
 
-## Maintainers
+## API Evangelist rating
 
-**FN:** Kin Lane
-**Email:** kin@apievangelist.com
+**Kin Score 24.8** — emerging · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 68.3 |
+| Contract quality | 49.3 |
+| Contract governance | 0.0 |
+| Operational transparency | 7.9 |
+| Developer ergonomics | 21.4 |
+| Access clarity | 7.9 |
+
+**Agent readiness 28.8** — agent-ready
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | verified |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | — |
+| OpenAPI Examples | — |
+| Rate Limit Signal | derived (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | partial |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 11.8** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/datalastic/](https://apis.io/providers/datalastic/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Datalastic: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/datalastic/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
